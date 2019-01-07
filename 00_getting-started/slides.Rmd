@@ -163,6 +163,18 @@ Course website:
 
 ---
 
+## Blogs and Reading
+
+- assigned reading each week
+
+- write a blog entry in response to a related question
+
+- blog entries are due on midnight the following Wednesday.
+
+- this weeks reading and blog: https://stat585-at-isu.github.io/blog-2019/01/LastnameFirstname.html
+
+---
+
 ## Labs
 
 - during class time on every other Wednesday (starting with Wednesday, Jan 30th) 
