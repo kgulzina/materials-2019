@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Stat 585 - Tools of the Trade</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Heike Hofmann" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Stat 585 - Tools of the Trade
+### Heike Hofmann
+### Spring 2019
+
+---
+
+
+
+
+
+In this class we will use 
+
+- R and RStudio: make sure you have newish versions installed  (R 3.2.x; RStudio 1.1.463) 
+
+- markdown and Rmarkdown, see [Rstudio cheat sheet](https://www.rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf) 
+
+- git &amp; github
+
+    - Jenny Bryan's: Happy Git with R http://happygitwithr.com/
+    - Data Carpentry's tutorials: https://github.com/datacarpentry
+    - Reproducible Science Curriculum intitative: https://github.com/Reproducible-Science-Curriculum
+
+
+---
+
+# git and github
+
+
+&lt;img src="http://imgs.xkcd.com/comics/git_2x.png" width=300&gt;
+
+http://xkcd.com/1597/
+
+
+---
+
+## GitHub account
+
+Do you have a github account? 
+
+- No? Create a _free_ account at https://github.com/
+
+- Yes? Then log into it. 
+    - Do you remember your login and password? If not, try out different emails and let github send you the info.
+
+---
+
+## What is git?
+
+- **Git** is a *version control system* that was created to help developers manage collaborative software projects. Git tracks the evolution of a set of files, called a **repository** or **repo**. 
+
+- This helps us
+    - *merge* conflicts that arise from collaboration
+    - *rollback* to previous versions of files as necessary
+    - store *master* versions of files, no more `paper_final_final_I_really_mean_it.docx`
+
+---
+
+## GitHub 
+
+[GitHub](github.com) is one of many hosting services
+(others are e.g. [Bitbucket](bitbucket.org), [GitLab](about.gitlab.com), etc.). 
+
+&lt;img src="images/github.png" width=400&gt;
+
+---
+
+## Git Terminology
+
+from [github glossary](https://help.github.com/articles/github-glossary/)
+
+- **Repository:** the basic element of git - like a project's folder. A repository contains all of the project files, and their __revision history__. One person owns a repository, multiple people can collaborate. Can be either public or private.
+
+- **Remote:** This is the version of something that is hosted on a server. It can be (and usually is) connected to a local clone.
+
+- **Clone:** A local copy of a repository that lives on your computer instead of on a website's server somewhere
+
+- **Fork:** a remote copy of a repository stored under your account.Forks allow you to freely make changes to a project without affecting the original. 
+
+---
+
+## Terminology (cont'd)
+
+
+- **Pull:** When you are fetching changes from the remote repository and merging them with your local clone. 
+
+- **Commit:** A checkpoint for the local clone to save changes to a file (or set of files). Every time you commit, git creates a unique ID that allows you to keep record of what changes were made when and by who.
+
+- **Push:** Sending your committed changes to the remote repository.
+
+- **Pull Request:** Proposed changes to a repository submitted by a user and accepted or rejected by a repository's collaborators.
+
+- **Issue:** Issues are suggested improvements, tasks or questions related to the repository. 
+
+---
+
+## Repositories
+
+By default, all materials on GitHub are **public**. This is *good* because you are getting your work out there and contributing to the open source community! 
+
+If you need **private** repos, checkout [GitHub for Education](https://education.github.com/) - free private repos for students/postdocs/professors.
+
+![](images/github-icon.png)
+
+---
+class: inverse
+## Your Turn (5 min)
+
+1. Create a git repository hosted at GitHub
+
+    - Go to your Github profile. The url is [http://github/your-user-name]().
+    
+    - Create a new Github repository, click &lt;span style="background:limegreen; color:white"&gt;new&lt;/span&gt; button, under the repositories tab.
+    
+    - Click **Initialize this repository with a README**
+
+2. Make changes to the `README.md` file 
+
+3. Commit changes to repository
+
+---
+
+## So far
+
+-  Once the repository is created you will be directed to the repository page which now has its own web address. 
+
+-  Each repository on Github has a unique url so you can easily share. 
+
+-  The git history is a detailed history of all the changes made to that file.  One of the features of using Github is the ability to view your repository history which are displayed in the Graphs section of your Github repository page. 
+
+-  At this point in the git history of your repository has a couple of commits.
+
+---
+class: inverse
+## Your Turn
+
+This might get slightly frenzied! 😵😵😵
+
+1.  Go to the repository  `sandbox` on the 585 GitHub organization at https://github.com/heike/sandbox. 
+
+2. Make a remote copy of the repository by forking it to your github account.
+
+3. In your repository, open the file story.md and add to the storyline. Commit your changes. 
+
+4. Create a pull request to upload your changes to the original repository.
+You might first have to update your fork to include changes made to the original repository (see next slides for details).
+
+---
+
+## Create a pull request
+
+- A **pull request** is the final step in the collaboration process, essentially asking if the edits made to your copy can be incorporated into the original repository. 
+
+1.  Make sure you are in your copy of the repository: look at the url - your user name should preface the repository name.  
+
+2.  Click the  &lt;span style="background:limegreen; color:white"&gt;New Pull Request&lt;/span&gt; button. You will get an overview of the changes you made to the repository. 
+
+3.  Click the "Create a Pull Request" button to continue the pull request. The owner of the original repository will now get a notification of a pull request on their main repository.
+
+4.  Go ahead and accept this pull request. 
+
+---5. Everybody should aim to add at least two pull requests.
+
+
+
+## Update a forked repository
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
