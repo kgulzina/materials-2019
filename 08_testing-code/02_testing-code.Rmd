@@ -41,6 +41,7 @@ For a bit of extra work, you get:
 - Fewer bugs
     - Essential functions are tested and issues are caught quickly
     - Visual confirmation that essential features are working
+    - When debugging, write a test to pinpoint the bug (and stop it from reoccurring)
 
 - Better code structure
     - Unit testing encourages modular code with functions that do only one thing
