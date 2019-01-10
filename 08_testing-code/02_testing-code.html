@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Stat 585 - Testing Your Code</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Susan Vanderplas" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/default-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="tweaks.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Stat 585 - Testing Your Code
+### Susan Vanderplas
+
+---
+
+class: center, middle
+
+
+
+# Unit Testing
+
+---
+
+## Unit tests
+
+_"Unit" tests_ are tests that evaluate one feature of a function
+
+_Test Driven Development_ is an approach to programming where the unit tests are written before the actual code
+
+- Requirements are decided in advance
+
+- Code must meet the requirements (and only the requirements)
+
+- Like anything, TDD can be taken to an extreme
+
+---
+
+## Unit tests
+
+For a bit of extra work, you get: 
+
+- Fewer bugs
+    - Essential functions are tested and issues are caught quickly
+    - Visual confirmation that essential features are working
+
+- Better code structure
+    - Unit testing encourages modular code with functions that do only one thing
+    - Easier to document functions when you're writing them to meet tests
+
+- Robust code 
+    - make big changes quickly and without downstream problems
+    - Any changes that break things should be caught with tests
+
+- (in theory) Easier restarts - pick up at the last failed test and write code to satisfy that test
+
+---
+
+## Unit tests
+
+- Modular (by design)
+
+- Tests should run quickly
+
+- Each test (or set of tests) is run in a clean environment
+
+- Set-up and Tear-down tasks are used to set up environments for testing
+
+- Should not depend on outside files (traditionally)
+        
+
+---
+
+## Unit tests
+
+&gt; But, we're statisticians. What about the data?
+
+- use tiny test data (`dput()` is helpful)
+
+- read in toy data from files in the test directory
+
+- use data included with the package
+
+- use data included in base R
+
+- download data from elsewhere with a set-up function, delete it with a tear-down function
+    - tests will fail without internet or if the site is down
+    
+---
+
+## Tools
+
+The `testthat` package provides a framework for unit tests if you are working within a package. 
+.small[[This github issue](https://github.com/r-lib/testthat/issues/659) has a good discussion of testing outside of the package framework]
+
+
+```r
+## install.packages("testthat")
+library(testthat)
+```
+
+### Optional
+
+- `usethis`: help with setting up testing and continuous integration (later)
+- `testthis`: RStudio addins to make testing easier.
+- `covr`: reports on how much of your code is covered by tests
+- `visualTest`[(on Github)](https://github.com/MangoTheCat/visualTest) or `vdiffr`:  testing graphical output
+
+---
+
+## Trivial Example
+
+Function: `mean(x, na.rm)`
+
+Important behaviors: 
+
+--
+
+- issue a warning or error when x is not numeric (or if x cannot be coerced to a numeric vector)
+
+--
+
+- return a single numeric value equal to sum(x)/length(x)
+    - when x has no NA values
+    - when x is numeric and na.rm = T
+
+--
+
+- return NA when x has NAs and na.rm = F
+
+---
+
+## Trivial Example Tests
+
+Important behaviors: 
+
+- issue an error when x is not numeric (or if x cannot be coerced to a numeric vector)
+
+```r
+x &lt;- letters[1:3]
+mean(x)
+```
+
+```
+## Warning in mean.default(x): argument is not numeric or logical: returning
+## NA
+```
+
+```
+## [1] NA
+```
+
+```r
+expect_warning(mean(x)) # This is the minimal test
+expect_warning(mean(x), # This tests for a specific warning
+               "argument is not numeric or logical: returning NA") 
+```
+
+---
+
+## Trivial Example Tests
+
+Important behaviors: 
+- return a single numeric value equal to sum(x)/length(x)
+
+
+```r
+x &lt;- 1:8
+y &lt;- c(1:8, NA)
+z &lt;- c(T, F)
+
+# Test that mean(1:8) returns a numerically correct response
+expect_equal(mean(x), 4.5)
+
+# Test that mean(c(T, F)) returns 0.5
+expect_equal(mean(z), 0.5)
+
+# Test that mean(c(1:8, NA)) equals mean(1:8) when na.rm = T
+expect_equal(mean(y, na.rm = T), mean(x))
+```
+
+---
+
+## Trivial Example Tests
+
+- return NA when na.rm = F and x has NAs
+
+```r
+# Can also test to see if a test fails...
+expect_failure(
+  expect_equal(mean(c(1:8, NA), na.rm = F), mean(c(1:8)))
+)
+
+# Or test if something returns NA
+expect_true(is.na(mean(c(1:8, NA))))
+```
+
+
+---
+class:inverse
+## Your Turn
+
+- Function specifications: 
+    - name: `sign_root`
+    - Parameters n and value, both numeric
+        - Function should error if `n` or `value` is not numeric
+    - Function should return a number 
+        - with the same sign as `value`
+        - with magnitude equal to the `n`th root of `value`.
+
+1. Write the tests for this function
+
+2. Write the function and upload to https://gist.github.com/
+
+3. Use your tests on your neighbor's function - do they pass?
+
+---
+
+## Beyond Unit Tests
+
+Unit tests only examine a single function; a package is a group of functions working together. 
+
+_Integration tests_ look at how functions work together to perform a task.
+
+_Functional tests_ look at the whole package
+
+.center[&lt;img alt="Testing Pyramid" src = "https://cdn.softwaretestinghelp.com/wp-content/qa/uploads/2016/12/image-result-for-unit-testing-vs-functional-testin.png" width = 50%/&gt;    
+.small[Source: https://www.softwaretestinghelp.com/the-difference-between-unit-integration-and-functional-testing]]
+
+---
+
+## Example: Types of Testing
+.left-column[
+![Flour](https://upload.wikimedia.org/wikipedia/commons/6/64/All-Purpose_Flour_%284107895947%29.jpg)
+]
+.right-column[
+Unit tests: 
+
+- salt is salty
+- yeast is alive
+- water behaves as expected (freezes at 0&lt;span&gt;&amp;#176;&lt;/span&gt; C, boils at 100&lt;span&gt;&amp;#176;&lt;/span&gt;C)
+- flour has correct gluten, texture, composition
+- oven turns on and can reach the correct temperature
+
+]
+
+
+---
+
+## Example: Types of Testing
+
+.left-column[
+![Dough rising](https://upload.wikimedia.org/wikipedia/commons/archive/6/66/20100215172032%21Breaddough1.jpg)
+
+&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;
+![Bread picture](https://c.pxhere.com/photos/ab/fc/bread_baguette_eat_food_baked_goods_delicious_white_bread_bake-830372.jpg!d)
+
+]
+.right-column[
+
+
+Integration tests:
+
+- Yeast dissolves in water (yeast + water)
+
+- Adding flour to yeast and water causes the yeast to grow and bubble (flour + yeast + water)
+
+- Kneading the dough causes gluten to develop properly (action + dough)
+
+- Dough rises (dough + oven)
+
+
+Functional test:
+
+- Bread is tasty (bread + user)
+]
+
+---
+
+## Limitations
+
+- Can't test every possible input combination in most applications
+
+- It's hard to create realistic tests
+
+- Unit testing alone is not sufficient - must test integration and how actual humans use the software
+
+- High-level testing (integration, functional) is hard to automate and requires human intervention
+
+- Version control is essential to this process - track tests and changes
+
+---
+
+## Code Coverage
+
+&gt; How many unit tests are enough?
+
+- `covr` is a package that will:
+    1. build your package in a clean environment 
+    2. run your tests
+    3. determine how many times each line was evaluated (through [magic](https://cran.r-project.org/web/packages/covr/vignettes/how_it_works.html))
+    4. launch a Shiny app to show you line-by-line coverage reports
+    
+- 100% coverage is good, but unit tests aren't everything
+    - Some lines aren't worth testing
+    - Integration testing matters too!
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
