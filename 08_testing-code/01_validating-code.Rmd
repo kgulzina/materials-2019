@@ -1,0 +1,42 @@
+---
+title: "Stat 585 - Writing Debug-Friendly Code"
+author: "Susan Vanderplas"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: [default, default-fonts, "tweaks.css"]
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: center, middle
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+class: inverse
+background-image: url(https://i.kinja-img.com/gawker-media/image/upload/s--VSUo-ENd--/c_fit,f_auto,fl_progressive,q_80,w_636/nkzqgqde0lvay3nwoxrg.png)
+background-size: contain
+
+---
+
+## Error messages
+
+![Fail whale is dead - useless error message](https://i.imgur.com/WHriEbA.png)
+
+.large[.center[How do we write code that produces good (useful) error messages?]]
+
+---
+
+## Anticipating problems
+
+- Sources of Errors: 
+    1. Inputs
+    2. Calculations
+    3. Return values
+    4. Referencing things that don't exist / Typos
+    5. Gremlins or Cosmic Rays
+    
+
