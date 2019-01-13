@@ -1,21 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Stat 585 - Debugging</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Susan Vanderplas" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/default-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="tweaks.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Stat 585 - Debugging
+### Susan Vanderplas
+
 ---
-title: "Stat 585 - Debugging"
-author: "Susan Vanderplas"
-output:
-  xaringan::moon_reader:
-    lib_dir: libs
-    css: [default, default-fonts, "tweaks.css"]
-    nature:
-      beforeInit: "macros.js"
-      highlightStyle: github
-      highlightLines: true
-      countIncrementalSlides: false
----
+
 class: center, middle
 
-```{r setup, include=FALSE}
-options(htmltools.dir.version = FALSE)
-```
+
 
 ![](https://imgs.xkcd.com/comics/fixing_problems.png)
 
@@ -41,7 +45,7 @@ options(htmltools.dir.version = FALSE)
 - `print()` statements
 - going line-by-line through the code interactively
 
-<br/><br/>
+&lt;br/&gt;&lt;br/&gt;
 .small[
 Useful References: 
 - [Debugging, condition handling, and defensive programming](http://adv-r.had.co.nz/Exceptions-Debugging.html) by Hadley Wickham
@@ -53,9 +57,9 @@ Useful References:
 ## Traceback
 
 ```
-> library(nonpackage)
+&gt; library(nonpackage)
 Error in library(nonpackage) : there is no package called ‘nonpackage’
-> traceback()
+&gt; traceback()
 2: stop(txt, domain = NA)
 1: library(nonpackage)
 ```
@@ -89,7 +93,8 @@ Error in library(nonpackage) : there is no package called ‘nonpackage’
 
 Mark a function for debugging using `debugonce()` or `debug()`
 
-```{r, eval = F}
+
+```r
 debugonce(c)
 c(1, 2, 3)
 
@@ -114,10 +119,11 @@ class:inverse
 ## Your Turn .tiny[.shift-right[From [Advanced R](http://adv-r.had.co.nz/Exceptions-Debugging.html#debugging-answers)]]
 
 This function should compute the mean of all numeric columns: 
-```{r}
-col_means <- function(df) {
-  numeric <- sapply(df, is.numeric)
-  numeric_cols <- df[, numeric]
+
+```r
+col_means &lt;- function(df) {
+  numeric &lt;- sapply(df, is.numeric)
+  numeric_cols &lt;- df[, numeric]
 
   data.frame(lapply(numeric_cols, mean))
 }
@@ -125,7 +131,8 @@ col_means <- function(df) {
 
 Which of the following results are incorrect? Can you modify `col_means()` to be more robust to unusual inputs?
 
-```{r, eval = F}
+
+```r
 col_means(mtcars)
 col_means(mtcars[, 0])
 col_means(mtcars[0, ])
@@ -158,10 +165,22 @@ col_means(as.list(mtcars))
 
 Compare the error messages:
 
-```{r, error = T}
+
+```r
 library(assertthat)
 stopifnot(is.character(1:10))
+```
+
+```
+## Error in eval(expr, envir, enclos): is.character(1:10) is not TRUE
+```
+
+```r
 assert_that(is.character(1:10))
+```
+
+```
+## Error: 1:10 is not a character vector
 ```
 
 ---
@@ -187,4 +206,52 @@ assert_that(is.character(1:10))
 - `is.writeable(path)`/`is.readable(path)`: is path writeable/readable?
 
 - `has_extension(path, extension)`: does file have given extension?
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
 
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
