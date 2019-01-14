@@ -110,159 +110,13 @@ Read the data into your R session and answer the following questions:
 
 - what else do you find?
 
----
-class: middle, center
-## 
 
-Don't peek unless you have tried for yourself!
-
----
-
-# a solution 
-
-```{r, message = FALSE, warning = FALSE}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 library(tidyverse)
 pd <- read_csv("../data/isu-pd.csv")
-
-pd %>% count(Classification) %>% dim()
-# 147 different types of crime classifications
-
-pd  %>% count(Classification, sort = TRUE) %>% head()
-
-```
-
----
-
-# break multiple citings into Main and rest
-
-```{r, warning= FALSE, message = FALSE}
-pd <- pd %>% separate(Classification, into = "Main", sep="/", remove = FALSE) %>%
-  mutate(
-    Main = trimws(Main)
-  )
-
-pd  %>% count(Main, sort = TRUE) %>% head()
-```
-
-doesn't change much
-
----
-
-## Top ten bad days in 2018
-
-first get dates, see [RStudio lubridate cheat sheet](https://github.com/rstudio/cheatsheets/raw/master/lubridate.pdf):
-```{r}
-head(pd$`Date/Time Reported`)
-
 pd$date <- lubridate::mdy_hm(pd$`Date/Time Reported`)
-summary(pd$date)
-```
 
----
-
-## Top ten bad days in 2018 (2)
-
-Now we want to just have the day rather than the time
-
-```{r}
 pd$day <- lubridate::as_date(pd$date)
-head(pd$day)
-```
-
-
----
-
-## Top ten bad days in 2018 (3)
-
-```{r}
-pd %>% 
-  count(day, sort = TRUE) %>% 
-  filter(lubridate::year(day) == 2018) %>%
-  head(10)
-```
-
-
----
-
-## Average number of reports per day
-
-Why is this average not right for the average number of reports by day?
-```{r}
-pd %>% count(day) %>% summary()
-```
-
---
-
-Problem: we are missing days with zero reports.
-
----
-class: inverse
-## Your Turn 
-
-
-We want to find an elegant solution to the zero reports a day problem.
-
-The function `complete` in the `tidyr` package looks promising.
-
-Try to get it to work for this problem.
-
----
-class: middle, center
-##
-
-... only after you tried ...
-
----
-
-## Average number of reports per day (2)
-
-
-Why is this still wrong?
-
-```{r}
-pd %>% 
-  complete(day = full_seq(pd$day, period = 1)) %>% 
-  count(day) %>%
-  summary()
-```
-
----
-
-## Average number of reports per day (2)
-
-
-What does `complete` do exactly?
-```{r}
-pd %>% 
-  complete(day = full_seq(pd$day, period = 1))
-```
-
----
-
-## Average number of reports per day (3)
-
-```{r}
-perday <- pd %>% 
-  complete(day = full_seq(pd$day, period = 1)) %>% 
-  group_by(day) %>%
-  summarize(
-    n = sum(!is.na(Classification))
-  ) 
-
-perday %>%
-  summary()
-```
-
----
-
-## Crime reports over time
-
-```{r, fig.height = 5, fig.width = 8}
-perday %>%
-  mutate(year = lubridate::year(day)) %>%
-  ggplot(aes( x = lubridate::yday(day), y = n)) + 
-  geom_point() + 
-  facet_grid(year~.)
 ```
 
 ---
@@ -294,6 +148,12 @@ schedule17 <- schedule17 %>%
 schedule17$yday <- lubridate::yday(schedule17$date)
 schedule17$year <- lubridate::year(schedule17$date)
 
+perday <- pd %>% 
+  complete(day = full_seq(pd$day, period = 1)) %>% 
+  group_by(day) %>%
+  summarize(
+    n = sum(!is.na(Classification))
+  ) 
 
 perday %>%
   mutate(
@@ -328,4 +188,12 @@ Don't forget to *look at* the chart. What are your main findings?
 
 - joining data sets: `left_join`, `anti_join`, see also https://r4ds.had.co.nz/relational-data.html
 
+
+---
+class: inverse
+## Your turn
+
+The file [ames-temps.csv](../data/ames-temps.csv) consists of daily temperatures since Jan 1 2017. 
+
+Merge daily average temperatures into the daily reports of the ISU police. Is there a temperature effect?
 

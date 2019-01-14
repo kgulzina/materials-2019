@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Stat 585 - elements of the tidyverse</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Heike Hofmann" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Stat 585 - elements of the tidyverse
+### Heike Hofmann
+
+---
+
+
+## tidyverse
+
+
+
+
+`tidyverse` is an 'opinionated' package bundling several other R packages for data science tasks:
+
+
+```r
+tidyverse::tidyverse_packages()
+```
+
+```
+##  [1] "broom"       "cli"         "crayon"      "dplyr"       "dbplyr"     
+##  [6] "forcats"     "ggplot2"     "haven"       "hms"         "httr"       
+## [11] "jsonlite"    "lubridate"   "magrittr"    "modelr"      "purrr"      
+## [16] "readr"       "readxl\n(&gt;=" "reprex"      "rlang"       "rstudioapi" 
+## [21] "rvest"       "stringr"     "tibble"      "tidyr"       "xml2"       
+## [26] "tidyverse"
+```
+
+- share common data representations and API, i.e. work well together
+
+- see https://github.com/hadley/tidyverse for more information
+
+
+---
+
+## Graphical and numerical summaries
+
+
+1. graphical summaries - visualizations with `ggplot2`:
+
+    - [RStudio cheatsheet for ggplot2](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
+    
+    - online documentation: https://ggplot2.tidyverse.org/
+    
+    - Google group: https://groups.google.com/forum/#!forum/ggplot2
+  
+2. numerical summaries - elements of `dplyr` and `tidyr`
+
+
+---
+
+## The pipe operator `%&gt;%`
+
+`f(x) %&gt;% g(y)` is equivalent to `g(f(x), y)`
+
+i.e. the output of one function is used as input to the next function. This function can be the identity
+
+Consequences:
+
+- `x %&gt;% f(y)` is the same as `f(x, y)`
+
+- statements of the form `k(h(g(f(x, y), z), u), v, w)` become
+`x %&gt;% 
+   f(y) %&gt;% 
+   g(z) %&gt;% 
+   h(u) %&gt;% 
+   k(v, w)`
+
+- read `%&gt;%` as "then do"
+
+
+---
+
+## dplyr 
+
+There are five primary `dplyr` *verbs*, representing distinct data analysis tasks:
+
+- **Filter**: Select specified rows of a data frame, produce subsets
+
+- **Arrange**: Reorder the rows of a data frame
+
+- **Select**: Select particular columns of a data frame
+
+- **Mutate**: Add new or change existing columns of the data frame (as functions of existing columns)
+
+- **Summarise**: Create collapsed summaries of a data frame
+
+- (**Group By**: Introduce structure to a data frame)
+
+&lt;br&gt;
+
+`dplyr` resources:
+
+- https://dplyr.tidyverse.org/
+
+- R for Data Science book: https://r4ds.had.co.nz/transform.html
+
+---
+class: inverse
+## Your Turn
+
+The Iowa State Police Department publishes a Daily Crime Log at http://www.police.iastate.edu/content/daily-crime-log
+
+Data for 2017 and most of 2018 are available as file [pd-isu.csv](../data/pd-isu.csv) from the course website.
+
+Read the data into your R session and answer the following questions:
+
+- which types of crimes (`Classification`) are typically committed? How many different classifications are there?
+
+- which days are in the top ten for 2018? (Use the `lubridate` package to get to date variables)
+
+- how many times a day are crimes typically reported? 
+
+- what else do you find?
+
+
+
+
+---
+class: inverse
+## Your turn
+
+The files [isu-football-2017.csv](../data/isu-football-2017.csv) and [isu-football-2018.csv](../data/isu-football-2018.csv) consist of the Cyclones' football schedule in 2017 and 2018. 
+
+Use the data to create the chart below:
+
+![](01-just-intro_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
+
+Don't forget to *look at* the chart. What are your main findings?
+
+---
+
+## Tools for working with data
+
+- moving between wide and long forms of data:
+
+    - `gather`
+    
+    - `spread` 
+    
+    - see https://r4ds.had.co.nz/tidy-data.html
+
+
+- joining data sets: `left_join`, `anti_join`, see also https://r4ds.had.co.nz/relational-data.html
+
+
+---
+class: inverse
+## Your turn
+
+The file [ames-temps.csv](../data/ames-temps.csv) consists of daily temperatures since Jan 1 2017. 
+
+Merge daily average temperatures into the daily reports of the ISU police. Is there a temperature effect?
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
