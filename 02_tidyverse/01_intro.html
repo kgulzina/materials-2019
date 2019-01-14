@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Stat 585 - elements of the tidyverse</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Heike Hofmann" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Stat 585 - elements of the tidyverse
+### Heike Hofmann
+
+---
+
+
+## tidyverse
+
+
+
+
+`tidyverse` is an 'opinionated' package bundling several other R packages for data science tasks:
+
+
+```r
+tidyverse::tidyverse_packages()
+```
+
+```
+##  [1] "broom"       "cli"         "crayon"      "dplyr"       "dbplyr"     
+##  [6] "forcats"     "ggplot2"     "haven"       "hms"         "httr"       
+## [11] "jsonlite"    "lubridate"   "magrittr"    "modelr"      "purrr"      
+## [16] "readr"       "readxl\n(&gt;=" "reprex"      "rlang"       "rstudioapi" 
+## [21] "rvest"       "stringr"     "tibble"      "tidyr"       "xml2"       
+## [26] "tidyverse"
+```
+
+- share common data representations and API, i.e. work well together
+
+- see https://github.com/hadley/tidyverse for more information
+
+
+---
+
+## Graphical and numerical summaries
+
+
+1. graphical summaries - visualizations with `ggplot2`:
+
+    - [RStudio cheatsheet for ggplot2](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
+    
+    - online documentation: https://ggplot2.tidyverse.org/
+    
+    - Google group: https://groups.google.com/forum/#!forum/ggplot2
+  
+2. numerical summaries - elements of `dplyr` and `tidyr`
+
+
+---
+
+## The pipe operator `%&gt;%`
+
+`f(x) %&gt;% g(y)` is equivalent to `g(f(x), y)`
+
+i.e. the output of one function is used as input to the next function. This function can be the identity
+
+Consequences:
+
+- `x %&gt;% f(y)` is the same as `f(x, y)`
+
+- statements of the form `k(h(g(f(x, y), z), u), v, w)` become
+`x %&gt;% 
+   f(y) %&gt;% 
+   g(z) %&gt;% 
+   h(u) %&gt;% 
+   k(v, w)`
+
+- read `%&gt;%` as "then do"
+
+
+---
+
+## dplyr 
+
+There are five primary `dplyr` *verbs*, representing distinct data analysis tasks:
+
+- **Filter**: Select specified rows of a data frame, produce subsets
+
+- **Arrange**: Reorder the rows of a data frame
+
+- **Select**: Select particular columns of a data frame
+
+- **Mutate**: Add new or change existing columns of the data frame (as functions of existing columns)
+
+- **Summarise**: Create collapsed summaries of a data frame
+
+- (**Group By**: Introduce structure to a data frame)
+
+&lt;br&gt;
+
+`dplyr` resources:
+
+- https://dplyr.tidyverse.org/
+
+- R for Data Science book: https://r4ds.had.co.nz/transform.html
+
+---
+class: inverse
+## Your Turn
+
+The Iowa State Police Department publishes a Daily Crime Log at http://www.police.iastate.edu/content/daily-crime-log
+
+Data for 2017 and most of 2018 are available as file [pd-isu.csv](../data/pd-isu.csv) from the course website.
+
+Read the data into your R session and answer the following questions:
+
+- which types of crimes (`Classification`) are typically committed? How many different classifications are there?
+
+- which days are in the top ten for 2018? (Use the `lubridate` package to get to date variables)
+
+- how many times a day are crimes typically reported? 
+
+- what else do you find?
+
+---
+class: middle, center
+## 
+
+Don't peak unless you have tried for yourself!
+
+---
+
+# a solution 
+
+
+```r
+library(tidyverse)
+pd &lt;- read_csv("../../data/isu-pd/isu-pd.csv")
+
+pd %&gt;% count(Classification) %&gt;% dim()
+```
+
+```
+## [1] 147   2
+```
+
+```r
+# 147 different types of crime classifications
+
+pd  %&gt;% count(Classification, sort = TRUE) %&gt;% head()
+```
+
+```
+## # A tibble: 6 x 2
+##   Classification                  n
+##   &lt;chr&gt;                       &lt;int&gt;
+## 1 Theft                         400
+## 2 Alcohol Violation             341
+## 3 Public Intoxication           245
+## 4 Drug Violation                231
+## 5 Operating while Intoxicated   145
+## 6 Harassment                    124
+```
+
+---
+
+# break multiple citings into Main and rest
+
+
+```r
+pd &lt;- pd %&gt;% separate(Classification, into = "Main", sep="/", remove = FALSE) %&gt;%
+  mutate(
+    Main = trimws(Main)
+  )
+
+pd  %&gt;% count(Main, sort = TRUE) %&gt;% head()
+```
+
+```
+## # A tibble: 6 x 2
+##   Main                            n
+##   &lt;chr&gt;                       &lt;int&gt;
+## 1 Theft                         401
+## 2 Alcohol Violation             353
+## 3 Public Intoxication           281
+## 4 Drug Violation                279
+## 5 Operating while Intoxicated   179
+## 6 Harassment                    125
+```
+
+doesn't change much
+
+---
+
+## Top ten bad days in 2018
+
+first get dates, see [RStudio lubridate cheat sheet](https://github.com/rstudio/cheatsheets/raw/master/lubridate.pdf):
+
+```r
+head(pd$`Date/Time Reported`)
+```
+
+```
+## [1] "01/01/17 1643" "01/01/17 2107" "01/02/17 0257" "01/06/17 1358"
+## [5] "01/07/17 0107" "01/07/17 2131"
+```
+
+```r
+pd$date &lt;- lubridate::mdy_hm(pd$`Date/Time Reported`)
+summary(pd$date)
+```
+
+```
+##                  Min.               1st Qu.                Median 
+## "2017-01-01 16:43:00" "2017-08-08 05:39:00" "2017-10-28 12:47:30" 
+##                  Mean               3rd Qu.                  Max. 
+## "2017-12-07 17:29:53" "2018-05-04 11:09:00" "2019-01-05 22:12:00"
+```
+
+Now we want to just have the day rather than the time
+
+```r
+pd$day &lt;- lubridate::as_date(pd$date)
+head(pd$day)
+```
+
+```
+## [1] "2017-01-01" "2017-01-01" "2017-01-02" "2017-01-06" "2017-01-07"
+## [6] "2017-01-07"
+```
+
+
+---
+
+## Top ten bad days in 2018 (2)
+
+
+```r
+pd %&gt;% 
+  count(day, sort = TRUE) %&gt;% 
+  filter(lubridate::year(day) == 2018) %&gt;%
+  head(10)
+```
+
+```
+## # A tibble: 10 x 2
+##    day            n
+##    &lt;date&gt;     &lt;int&gt;
+##  1 2018-08-18    46
+##  2 2018-09-01    38
+##  3 2018-09-22    24
+##  4 2018-09-15    17
+##  5 2018-04-22    12
+##  6 2018-11-24    12
+##  7 2018-01-29     8
+##  8 2018-08-30     8
+##  9 2018-09-28     8
+## 10 2018-01-20     7
+```
+
+
+---
+
+## Average number of reports per day
+
+Why is this average not right for the average number of reports by day?
+
+```r
+pd %&gt;% count(day) %&gt;% summary()
+```
+
+```
+##       day                   n         
+##  Min.   :2017-01-01   Min.   : 1.000  
+##  1st Qu.:2017-06-20   1st Qu.: 2.000  
+##  Median :2017-12-06   Median : 3.000  
+##  Mean   :2017-12-12   Mean   : 3.603  
+##  3rd Qu.:2018-05-27   3rd Qu.: 4.000  
+##  Max.   :2019-01-05   Max.   :98.000
+```
+
+&gt; Problem: we are missing days with zero reports.
+
+---
+class: inverse
+## Your Turn 
+
+
+We want to find an elegant solution to the zero reports a day problem.
+
+The function `complete` in the `tidyr` package looks promising.
+
+Try to get it to work for this problem.
+
+---
+class: middle, center
+##
+
+... only after you tried ...
+
+---
+
+## Average number of reports per day (2)
+
+
+```r
+pd %&gt;% 
+  complete(day = full_seq(pd$day, period = 1)) %&gt;% 
+  group_by(day) %&gt;%
+  summarize(
+    n = sum(!is.na(Classification))
+  ) %&gt;%
+  summary()
+```
+
+```
+##       day                   n         
+##  Min.   :2017-01-01   Min.   : 0.000  
+##  1st Qu.:2017-07-03   1st Qu.: 1.000  
+##  Median :2018-01-03   Median : 2.000  
+##  Mean   :2018-01-03   Mean   : 2.942  
+##  3rd Qu.:2018-07-05   3rd Qu.: 4.000  
+##  Max.   :2019-01-05   Max.   :98.000
+```
+
+---
+
+## Tools for working with data
+
+- moving between wide and long forms of data:
+
+    - `gather`
+    
+    - `spread` 
+    
+    - see https://r4ds.had.co.nz/tidy-data.html
+
+
+- joining data sets: `left_join`, `anti_join`, see also https://r4ds.had.co.nz/relational-data.html
+
+
+
+---
+class: inverse
+## Your turn
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

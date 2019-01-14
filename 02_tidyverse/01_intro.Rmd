@@ -1,0 +1,297 @@
+---
+title: "Stat 585 - elements of the tidyverse"
+author: "Heike Hofmann"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+## tidyverse
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+
+`tidyverse` is an 'opinionated' package bundling several other R packages for data science tasks:
+
+```{r}
+tidyverse::tidyverse_packages()
+```
+
+- share common data representations and API, i.e. work well together
+
+- see https://github.com/hadley/tidyverse for more information
+
+
+---
+
+## Graphical and numerical summaries
+
+
+1. graphical summaries - visualizations with `ggplot2`:
+
+    - [RStudio cheatsheet for ggplot2](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
+    
+    - online documentation: https://ggplot2.tidyverse.org/
+    
+    - Google group: https://groups.google.com/forum/#!forum/ggplot2
+  
+2. numerical summaries - elements of `dplyr` and `tidyr`
+
+
+---
+
+## The pipe operator `%>%`
+
+`f(x) %>% g(y)` is equivalent to `g(f(x), y)`
+
+i.e. the output of one function is used as input to the next function. This function can be the identity
+
+Consequences:
+
+- `x %>% f(y)` is the same as `f(x, y)`
+
+- statements of the form `k(h(g(f(x, y), z), u), v, w)` become
+`x %>% 
+   f(y) %>% 
+   g(z) %>% 
+   h(u) %>% 
+   k(v, w)`
+
+- read `%>%` as "then do"
+
+
+---
+
+## dplyr 
+
+There are five primary `dplyr` *verbs*, representing distinct data analysis tasks:
+
+- **Filter**: Select specified rows of a data frame, produce subsets
+
+- **Arrange**: Reorder the rows of a data frame
+
+- **Select**: Select particular columns of a data frame
+
+- **Mutate**: Add new or change existing columns of the data frame (as functions of existing columns)
+
+- **Summarise**: Create collapsed summaries of a data frame
+
+- (**Group By**: Introduce structure to a data frame)
+
+<br>
+
+`dplyr` resources:
+
+- https://dplyr.tidyverse.org/
+
+- R for Data Science book: https://r4ds.had.co.nz/transform.html
+
+---
+class: inverse
+## Your Turn
+
+The Iowa State Police Department publishes a Daily Crime Log at http://www.police.iastate.edu/content/daily-crime-log
+
+Data for 2017 and most of 2018 are available as file [pd-isu.csv](../data/pd-isu.csv) from the course website.
+
+Read the data into your R session and answer the following questions:
+
+- which types of crimes (`Classification`) are typically committed? How many different classifications are there?
+
+- which days are in the top ten for 2018? (Use the `lubridate` package to get to date variables)
+
+- how many times a day are crimes typically reported? 
+
+- what else do you find?
+
+---
+class: middle, center
+## 
+
+Don't peak unless you have tried for yourself!
+
+---
+
+# a solution 
+
+```{r, message = FALSE, warning = FALSE}
+library(tidyverse)
+pd <- read_csv("../data/isu-pd/isu-pd.csv")
+
+pd %>% count(Classification) %>% dim()
+# 147 different types of crime classifications
+
+pd  %>% count(Classification, sort = TRUE) %>% head()
+
+```
+
+---
+
+# break multiple citings into Main and rest
+
+```{r, warning= FALSE, message = FALSE}
+pd <- pd %>% separate(Classification, into = "Main", sep="/", remove = FALSE) %>%
+  mutate(
+    Main = trimws(Main)
+  )
+
+pd  %>% count(Main, sort = TRUE) %>% head()
+```
+
+doesn't change much
+
+---
+
+## Top ten bad days in 2018
+
+first get dates, see [RStudio lubridate cheat sheet](https://github.com/rstudio/cheatsheets/raw/master/lubridate.pdf):
+```{r}
+head(pd$`Date/Time Reported`)
+
+pd$date <- lubridate::mdy_hm(pd$`Date/Time Reported`)
+summary(pd$date)
+```
+
+Now we want to just have the day rather than the time
+```{r}
+pd$day <- lubridate::as_date(pd$date)
+head(pd$day)
+```
+
+
+---
+
+## Top ten bad days in 2018 (2)
+
+```{r}
+pd %>% 
+  count(day, sort = TRUE) %>% 
+  filter(lubridate::year(day) == 2018) %>%
+  head(10)
+```
+
+
+---
+
+## Average number of reports per day
+
+Why is this average not right for the average number of reports by day?
+```{r}
+pd %>% count(day) %>% summary()
+```
+
+> Problem: we are missing days with zero reports.
+
+---
+class: inverse
+## Your Turn 
+
+
+We want to find an elegant solution to the zero reports a day problem.
+
+The function `complete` in the `tidyr` package looks promising.
+
+Try to get it to work for this problem.
+
+---
+class: middle, center
+##
+
+... only after you tried ...
+
+---
+
+## Average number of reports per day (2)
+
+```{r}
+perday <- pd %>% 
+  complete(day = full_seq(pd$day, period = 1)) %>% 
+  group_by(day) %>%
+  summarize(
+    n = sum(!is.na(Classification))
+  ) 
+
+perday %>%
+  summary()
+```
+
+---
+
+## Crime reports over time
+
+```{r}
+perday %>%
+  mutate(year = lubridate::year(day)) %>%
+  ggplot(aes( x = lubridate::yday(day), y = n)) + 
+  geom_point() + 
+  facet_grid(year~.)
+```
+
+---
+class: inverse
+## Your turn
+
+The files [isu-football-2017.csv](../data/isu-football-2017.csv) and [isu-football-2018.csv](../data/isu-football-2018.csv) consist of the Cyclones' football schedule in 2017 and 2018. 
+
+Use the data to create chart below:
+
+```{r, echo = FALSE}
+
+schedule <- read.csv("../data/isu-football-2018.csv")
+schedule <- schedule %>%
+  mutate(
+    date = lubridate::ymd("2018-01-01")
+    )
+lubridate::month(schedule$date) <- as.numeric(factor(schedule$Month, levels=c("Sep", "Oct", "Nov", "Dec"))) + 8
+lubridate::mday(schedule$date) <- schedule$Day
+schedule$yday <- lubridate::yday(schedule$date)
+schedule$year <- lubridate::year(schedule$date)
+
+
+schedule17 <- read.csv("../data/isu-football-2017.csv")
+schedule17 <- schedule17 %>%
+  mutate(
+    date = lubridate::mdy(Date)
+  )
+schedule17$yday <- lubridate::yday(schedule17$date)
+schedule17$year <- lubridate::year(schedule17$date)
+
+
+perday %>%
+  mutate(
+    year = lubridate::year(day),
+    yday = lubridate::yday(day)
+    ) %>%
+  filter(year <= 2018) %>%
+  ggplot(aes(x = yday, y = n)) +
+  geom_vline(data = schedule, aes(xintercept = yday, colour = home)) +
+  geom_vline(data = schedule17, aes(xintercept = yday, colour = Home)) +
+  geom_point(size = .75) +
+  facet_grid(year~.) +
+  theme_bw() +
+  ylab("Number of police reports") +
+  xlab("Day of the year")
+```
+
+---
+
+## Tools for working with data
+
+- moving between wide and long forms of data:
+
+    - `gather`
+    
+    - `spread` 
+    
+    - see https://r4ds.had.co.nz/tidy-data.html
+
+
+- joining data sets: `left_join`, `anti_join`, see also https://r4ds.had.co.nz/relational-data.html
+
+
