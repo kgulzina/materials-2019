@@ -329,3 +329,9 @@ Don't forget to *look at* the chart. What are your main findings?
 - joining data sets: `left_join`, `anti_join`, see also https://r4ds.had.co.nz/relational-data.html
 
 
+---
+class: inverse
+## Your turn
+
+Does the weather affect the number of citations? Use  [Ames_weather_2017-2018.csv](../data/Ames_weather_2017-2018.csv) and graphically examine the relationship between temperature and number of citations.
+
