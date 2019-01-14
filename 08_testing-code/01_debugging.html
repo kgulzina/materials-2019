@@ -183,6 +183,7 @@ assert_that(is.character(1:10))
 ## Error: 1:10 is not a character vector
 ```
 
+
 ---
 
 ## Other `assertthat` functions
@@ -206,6 +207,70 @@ assert_that(is.character(1:10))
 - `is.writeable(path)`/`is.readable(path)`: is path writeable/readable?
 
 - `has_extension(path, extension)`: does file have given extension?
+
+---
+class:inverse
+## Your Turn
+Use `assertthat` functions to check inputs and output for the col_means function, ensuring that they make sense.
+
+
+```r
+col_means &lt;- function(df) {
+  numeric &lt;- sapply(df, is.numeric)
+  numeric_cols &lt;- df[, numeric]
+
+  data.frame(lapply(numeric_cols, mean))
+}
+```
+
+Upload your code to https://gist.github.com/ and see if you can break your neighbor's `col_means()` function
+
+---
+
+## `Checkmate`
+
+Goals: 
+- Faster (C backend)
+- Better memory handling - no intermediate objects created
+- Single call to check e.g. length, missingness, and lower/upper bounds (more concise)
+
+(Preview...) Also interfaces with `testthat` for unit tests.
+---
+
+## `Checkmate`
+
+- `assert*` to check type, length, any missing,  type-specific attributes (limits, character lengths, row/col names, ...)    
+also `assert_*` if you prefer that syntax
+    - Throw an error if the check fails
+    - Checked object returned invisibly on success
+        - can be used with pipes!
+
+- `test*` return TRUE or FALSE - best used to combine different checks
+
+- `expect*` functions to be used in unit tests
+
+- `check*` functions
+    - return error message as a string if the conditions fail
+    - return TRUE otherwise
+    - used in `assert*`, `test*`, `expect*` functions
+  
+
+---
+class:inverse
+## Your Turn
+Use `checkmate` functions to check inputs and output for the col_means function, ensuring that they make sense.
+
+
+```r
+col_means &lt;- function(df) {
+  numeric &lt;- sapply(df, is.numeric)
+  numeric_cols &lt;- df[, numeric]
+
+  data.frame(lapply(numeric_cols, mean))
+}
+```
+
+Upload your code to https://gist.github.com/ and see if you can break your neighbor's `col_means()` function
     </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script src="macros.js"></script>
