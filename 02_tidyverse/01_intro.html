@@ -439,13 +439,11 @@ Don't forget to *look at* the chart. What are your main findings?
 class: inverse
 ## Your turn
 
-Does the weather affect the number of citations? Use  [Ames_weather_2017-2018.csv](https://raw.githubusercontent.com/Stat585-at-ISU/materials-2019/master/data/Ames_weather_2017-2018.csv) and graphically examine the relationship between temperature and number of citations.
+Does the weather affect the number of citations for drug and alcohol-related offenses? 
 
-.small[For the curious: [script to get the weather data](https://gist.github.com/srvanderplas/9f4a471e0fb19495935fb2104f3ba9f8)]
+Use  [Ames_weather_2017-2018.csv](https://raw.githubusercontent.com/Stat585-at-ISU/materials-2019/master/data/Ames_weather_2017-2018.csv) and combine the data with relevant Ames PD data. 
 
----
-
-
+Graphically examine the relationship between temperature and number of citations. You may find it helpful to only consider Thursday - Saturday.
 
 
 ```r
@@ -459,64 +457,68 @@ ames_weather_daily &lt;- ames_weather %&gt;%
   summarize(temp_low = min(temp_low), temp_high = max(temp_high))
 ```
 
+.small[For the curious: [script to get the weather data](https://gist.github.com/srvanderplas/9f4a471e0fb19495935fb2104f3ba9f8)]
+
+
 ---
+class: middle,center
 
-
-```r
-# Just checking for weirdness
-ggplot(data = ames_weather_daily) + 
-  geom_ribbon(aes(x = day, ymin = temp_low, ymax = temp_high))
-```
-
-![](01_intro_files/figure-html/unnamed-chunk-15-1.png)&lt;!-- --&gt;
-
-```r
-# seems OK
-```
+... only after you tried ...
 
 ---
 
 
 ```r
-gg &lt;- pd %&gt;%
+library(lubridate)
+substitutions &lt;- c("P[uU]blic Intox.*" = "PublicIntox",
+                   "Drug Violation" = "Drug",
+                   "Alcohol Violation" = "Alcohol",
+                   "Operating [wW]hile Intoxicated" = "OWI")
+
+# Get relevant Ames PD data
+drug_alcohol_daily &lt;- pd %&gt;%
   filter(str_detect(Main, "Alcohol|Drug|Intox")) %&gt;%
-  mutate(Main = str_replace_all(Main, c("P[uU]blic Intox.*" = "PublicIntox",
-                                        "Drug Violation" = "Drug",
-                                        "Alcohol Violation" = "Alcohol",
-                                        "Operating [wW]hile Intoxicated" = "OWI"))) %&gt;%
+  mutate(Main = str_replace_all(Main, substitutions)) %&gt;%
   mutate(day = floor_date(date, unit = "day") %&gt;% as.Date()) %&gt;%
   group_by(Main, day) %&gt;%
   summarize(n = n()) %&gt;%
-  spread(key = Main, value = n, fill = 0) %&gt;%
-  complete(day = full_seq(.$day, period = 1), fill = list(PublicIntox = 0, Drug = 0, Alcohol = 0, OWI = 0)) %&gt;%
+  complete(day = full_seq(.$day, period = 1), fill = list(n = 0))
+```
+
+---
+
+
+```r
+# Combine the data with weather data
+wkd_weather_cites &lt;- drug_alcohol_daily %&gt;%
   left_join(ames_weather_daily) %&gt;% 
-  gather(key = Main, value = n, Alcohol:PublicIntox) %&gt;%
   mutate(wday = wday(day, label = T)) %&gt;%
-  filter(wday %in% c("Thurs", "Fri", "Sat")) %&gt;%
-  ggplot(aes(x = day, y = n, size = temp_low)) + 
-  geom_point(shape = 1) + 
-  geom_smooth(aes(x = day, y = n), se = F, span = .1) + 
-  facet_wrap(~Main, scales = "free_y") + 
-  scale_size_continuous(range = c(0.05, 2))
+  # Show game days
+  mutate(gameday = day %in% schedule$date | day %in% schedule17$date) %&gt;%
+  filter(wday %in% c("Thurs", "Fri", "Sat"))
 ```
 
 ```
 ## Joining, by = "day"
 ```
 
+```r
+# Plot
+wkd_weather_cites %&gt;%
+  ggplot(aes(x = temp_low, y = n)) + 
+  # Jitter in y a bit so points don't overlap as much
+  geom_jitter(aes(shape = gameday), height = .125) + 
+  geom_smooth(aes(x = temp_low, y = n), method = "lm") + 
+  facet_wrap(~Main, scales = "free_y") + 
+  scale_shape_manual(values = c(1, 2)) + 
+  ggtitle("Weekend Drug/Alcohol Citations and Weather") + 
+  scale_x_continuous("Temperature (deg F)") + scale_y_continuous("# Citations")
+```
 
 ---
+class:center
 
-
-```r
-gg
-```
-
-```
-## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
-```
-
-![](01_intro_files/figure-html/unnamed-chunk-17-1.png)&lt;!-- --&gt;
+![:scale 100%](01_intro_files/figure-html/yourturn-wkd-drugs-weather-1.png)
     </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script src="macros.js"></script>
