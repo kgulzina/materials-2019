@@ -31,7 +31,7 @@ Codebook with detailed explanations of variables is [available here](https://www
 
 ---
 class: inverse
-## Our turn
+## The Problem
 
 0. Complete the following tasks and **write instructions / documentation** for a collaborator to be able to reproduce your findings.
 
@@ -47,19 +47,20 @@ class: inverse
 
 ---
 
-# Our turn 
+# A solution attempt
 
-We are asked to investigate the relationship between height and weight of Iowans based on the 2015 BRFSS records (see course website for data).
+0. Setup 
 
-<br>
+    - this solution uses R v3.5.2 in RStudio. 
+    - You need the R packages `tidyverse` and `rmarkdown` to run the solution
+    - use the command `install.packages(c("tidyverse","rmarkdown"))` 
+    in the R console to install the two packages
 
 1. Navigate to https://github.com/Stat585-at-ISU/materials-2019
 
-2. Download the repository. 
+2. Download  the file [`test-case-solution.Rmd`](https://raw.githubusercontent.com/Stat585-at-ISU/materials-2019/master/01_collaborative-environment/test-case-solution.Rmd) in folder  `01_collaborative-environment`  in RStudio to get this set of slides.
 
-3. Open  the file `02_test-case-solution.Rmd` in folder  `01_collaborative-environment`  in RStudio to get this set of slides.
-
-4. "Knit" the file.
+3. "Knit" the file (Click on the button in the menu).
 
 ---
 
@@ -68,6 +69,7 @@ We are asked to investigate the relationship between height and weight of Iowans
 Read the data: 
 
 ```{r message = FALSE}
+library(tidyverse)
 iowa <- readr::read_csv("https://github.com/Stat585-at-ISU/materials/raw/master/01_collaborative-environment/data/brfss_iowa.csv") 
 # the read_csv function from the readr package is faster than the standard read.csv
 # but the output is a tibble (we'll come back to that)
@@ -80,7 +82,6 @@ iowa
 ## Variables `HEIGHT3` and `WEIGHT2`
 
 ```{r, message = FALSE}
-library(tidyverse)
 iowa %>% select(HEIGHT3, WEIGHT2) %>% head()
 ```
 
@@ -102,8 +103,6 @@ Let's plot that ...
 
 Load the `ggplot2` package to plot weight versus height:
 ```{r message = FALSE, fig.width=3.5, fig.height = 3.5, warning = FALSE}
-library(ggplot2)
-library(tidyverse)
 iowa %>% 
   ggplot(aes(x = WEIGHT2, y = HEIGHT3)) + geom_point()
 ```
