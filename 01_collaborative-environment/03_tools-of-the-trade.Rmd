@@ -176,7 +176,8 @@ See [fork and edit a repo](https://youtu.be/xMbn3jgwuGI) and [updating a fork](h
 
 - blog this week: [What was your worst experience working a team](https://stat585-at-isu.github.io/blog-2019/)
 
-- RStudio supports git integration in projects (setup during first lab)
+- RStudio supports git integration in projects (se
+twe will set this up ing firthe st lab)
 
 ---
 
