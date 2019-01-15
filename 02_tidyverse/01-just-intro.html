@@ -160,9 +160,25 @@ Don't forget to *look at* the chart. What are your main findings?
 class: inverse
 ## Your turn
 
-The file [ames-temps.csv](https://raw.githubusercontent.com/Stat585-at-ISU/materials-2019/master/data/Ames_weather_2017-2018.csv) consists of daily temperatures for 2017 and 2018.
+Does the weather affect the number of citations for drug and alcohol-related offenses? 
 
-Merge daily average temperatures into the daily reports of the ISU police. Is there a temperature effect?
+Use  [Ames_weather_2017-2018.csv](https://raw.githubusercontent.com/Stat585-at-ISU/materials-2019/master/data/Ames_weather_2017-2018.csv) and combine the data with relevant Ames PD data. 
+
+Graphically examine the relationship between temperature and number of citations. You may find it helpful to only consider Thursday - Saturday.
+
+
+```r
+ames_weather &lt;- read_csv("../data/Ames_weather_2017-2018.csv") %&gt;%
+  filter(!is.na(time))
+
+# summarize by day to get daily highs and lows
+ames_weather_daily &lt;- ames_weather %&gt;%
+  mutate(day = as.Date(date)) %&gt;%
+  group_by(day) %&gt;%
+  summarize(temp_low = min(temp_low), temp_high = max(temp_high))
+```
+
+.small[For the curious: [script to get the weather data](https://gist.github.com/srvanderplas/9f4a471e0fb19495935fb2104f3ba9f8)]
     </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
