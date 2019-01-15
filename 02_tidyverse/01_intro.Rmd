@@ -337,6 +337,8 @@ class: inverse
 
 Does the weather affect the number of citations? Use  [Ames_weather_2017-2018.csv](../data/Ames_weather_2017-2018.csv) and graphically examine the relationship between temperature and number of citations.
 
+.small[For the curious: [script to get the weather data](https://gist.github.com/srvanderplas/9f4a471e0fb19495935fb2104f3ba9f8)]
+
 ```{r include = F}
 ames_weather <- read_csv("../data/Ames_weather_2017-2018.csv") %>%
   mutate(day = as.Date(date)) %>%
