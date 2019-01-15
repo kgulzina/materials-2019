@@ -193,7 +193,44 @@ Don't forget to *look at* the chart. What are your main findings?
 class: inverse
 ## Your turn
 
-The file [ames-temps.csv](https://raw.githubusercontent.com/Stat585-at-ISU/materials-2019/master/data/Ames_weather_2017-2018.csv) consists of daily temperatures for 2017 and 2018.
+Does the weather affect the number of citations? Use  [Ames_weather_2017-2018.csv](https://raw.githubusercontent.com/Stat585-at-ISU/materials-2019/master/data/Ames_weather_2017-2018.csv) and graphically examine the relationship between temperature and number of citations.
 
-Merge daily average temperatures into the daily reports of the ISU police. Is there a temperature effect?
+.small[For the curious: [script to get the weather data](https://gist.github.com/srvanderplas/9f4a471e0fb19495935fb2104f3ba9f8)]
 
+```{r include = F}
+library(lubridate)
+ames_weather <- read_csv("../data/Ames_weather_2017-2018.csv") %>%
+  filter(!is.na(time))
+
+ames_weather_daily <- ames_weather %>%
+  mutate(day = as.Date(date)) %>%
+  group_by(day) %>%
+  summarize(temp_low = min(temp_low), temp_high = max(temp_high))
+
+# Just checking for weirdness
+ggplot(data = ames_weather_daily) + 
+  geom_ribbon(aes(x = day, ymin = temp_low, ymax = temp_high))
+
+
+pd %>%
+  filter(str_detect(Main, "Alcohol|Drug|Intox")) %>%
+  mutate(Main = str_replace_all(Main, c("P[uU]blic Intox.*" = "PublicIntox",
+                                        "Drug Violation" = "Drug",
+                                        "Alcohol Violation" = "Alcohol",
+                                        "Operating [wW]hile Intoxicated" = "OWI"))) %>%
+  mutate(day = floor_date(date, unit = "day") %>% as.Date()) %>%
+  group_by(Main, day) %>%
+  summarize(n = n()) %>%
+  spread(key = Main, value = n, fill = 0) %>%
+  complete(day = full_seq(.$day, period = 1), fill = list(PublicIntox = 0, Drug = 0, Alcohol = 0, OWI = 0)) %>%
+  left_join(ames_weather_daily) %>% 
+  gather(key = Main, value = n, Alcohol:PublicIntox) %>%
+  mutate(wday = wday(day, label = T)) %>%
+  filter(wday %in% c("Thurs", "Fri", "Sat")) %>%
+  ggplot(aes(x = day, y = n, size = temp_low)) + 
+  geom_point(shape = 1) + 
+  geom_smooth(aes(x = day, y = n), se = F, span = .1) + 
+  facet_wrap(~Main, scales = "free_y") + 
+  scale_size_continuous(range = c(0.05, 2))
+
+```

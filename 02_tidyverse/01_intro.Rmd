@@ -100,7 +100,7 @@ class: inverse
 
 The Iowa State Police Department publishes a Daily Crime Log at http://www.police.iastate.edu/content/daily-crime-log
 
-Data for 2017 and most of 2018 are available as file [pd-isu.csv](../data/pd-isu.csv) from the course website.
+Data for 2017 and most of 2018 are available as file [pd-isu.csv](https://raw.githubusercontent.com/Stat585-at-ISU/materials-2019/master/data/isu-pd.csv) from the course website.
 
 Read the data into your R session and answer the following questions:
 
@@ -271,7 +271,7 @@ perday %>%
 class: inverse
 ## Your turn
 
-The files [isu-football-2017.csv](../data/isu-football-2017.csv) and [isu-football-2018.csv](../data/isu-football-2018.csv) consist of the Cyclones' football schedule in 2017 and 2018. 
+The files [isu-football-2017.csv](https://raw.githubusercontent.com/Stat585-at-ISU/materials-2019/master/data/isu-football-2017.csv) and [isu-football-2018.csv](https://raw.githubusercontent.com/Stat585-at-ISU/materials-2019/master/data/isu-football-2018.csv) consist of the Cyclones' football schedule in 2017 and 2018. 
 
 Use the data to create the chart below:
 
@@ -335,26 +335,42 @@ Don't forget to *look at* the chart. What are your main findings?
 class: inverse
 ## Your turn
 
-Does the weather affect the number of citations? Use  [Ames_weather_2017-2018.csv](../data/Ames_weather_2017-2018.csv) and graphically examine the relationship between temperature and number of citations.
+Does the weather affect the number of citations? Use  [Ames_weather_2017-2018.csv](https://raw.githubusercontent.com/Stat585-at-ISU/materials-2019/master/data/Ames_weather_2017-2018.csv) and graphically examine the relationship between temperature and number of citations.
 
 .small[For the curious: [script to get the weather data](https://gist.github.com/srvanderplas/9f4a471e0fb19495935fb2104f3ba9f8)]
 
-```{r include = F}
+---
+
+```{r echo = FALSE, message = FALSE}
 library(lubridate)
+```
+
+```{r, message = FALSE}
 ames_weather <- read_csv("../data/Ames_weather_2017-2018.csv") %>%
   filter(!is.na(time))
 
+# summarize by day to get daily highs and lows
 ames_weather_daily <- ames_weather %>%
   mutate(day = as.Date(date)) %>%
   group_by(day) %>%
   summarize(temp_low = min(temp_low), temp_high = max(temp_high))
 
+```
+
+---
+
+```{r}
 # Just checking for weirdness
 ggplot(data = ames_weather_daily) + 
   geom_ribbon(aes(x = day, ymin = temp_low, ymax = temp_high))
 
+# seems OK
+```
 
-pd %>%
+---
+
+```{r}
+gg <- pd %>%
   filter(str_detect(Main, "Alcohol|Drug|Intox")) %>%
   mutate(Main = str_replace_all(Main, c("P[uU]blic Intox.*" = "PublicIntox",
                                         "Drug Violation" = "Drug",
@@ -376,3 +392,10 @@ pd %>%
   scale_size_continuous(range = c(0.05, 2))
 
 ```
+
+
+---
+
+```{r}
+gg
+
