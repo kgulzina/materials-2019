@@ -28,6 +28,15 @@ In this class we will use
     - Data Carpentry's tutorials: https://github.com/datacarpentry
     - Reproducible Science Curriculum intitative: https://github.com/Reproducible-Science-Curriculum
 
+---
+
+# Outline for today
+
+- create Github account
+
+- discuss concepts behind git repositories
+
+- practice working with git and Github
 
 ---
 
@@ -155,6 +164,25 @@ This might get slightly frenzied! 😵😵😵
 You might first have to update your fork to include changes made to the original repository (see next slides for details).
 
 
-Se<br>
+<br>
 
-e [fork and edit a repo](https://youtu.be/xMbn3jgwuGI) and [updating a fork](https://youtu.be/Ys2HGq3q3AA)
+See [fork and edit a repo](https://youtu.be/xMbn3jgwuGI) and [updating a fork](https://youtu.be/Ys2HGq3q3AA)
+
+---
+
+## git and GitHub in this class
+
+- use git and github for blogs, labs, and the final project
+
+- blog this week: [What was your worst experience working a team](https://stat585-at-isu.github.io/blog-2019/)
+
+- RStudio supports git integration in projects (se
+twe will set this up ing firthe st lab)
+
+---
+
+## Class next Wednesday
+
+review of elements of the tidyverse: ggplot2, dplyr, tidyr
+
+read through slide deck and see whether you could do the Your Turns (no need to actually do them)
