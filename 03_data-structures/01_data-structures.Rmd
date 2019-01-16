@@ -1,0 +1,70 @@
+---
+title: "Stat 585 - Data Types"
+author: "Heike Hofmann"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: [default, default-fonts, "tweaks.css"]
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: center, middle
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Data Types
+
+---
+
+## Basic Data Types
+
+Name | Example
+---- | -------
+numeric | 2.93
+integer | 2
+character | "hello world"
+boolean | TRUE
+
+Convert between data types with `as.XXX`, e.g. `as.numeric("2.394")` or `as.character("3.14159")`
+
+---
+
+## Basic Data Structures
+
+Data structures hold one or more basic data types and may have multiple dimensions:
+
+1D: Atomic vector (all one type) or List (multiple types)
+2D: Matrix (all one type) or Data frame (multiple types)
+nD: Array (all one type)
+
+An individual value ("scalar" in other languages) is actualy a length one vector in R
+
+---
+
+## Basic Data Structures
+
+`str()` can be used to examine a variable and determine its structure:
+
+```{r}
+library(tidyverse)
+data("mtcars")
+str(mtcars)
+
+data("eurodist")
+str(eurodist)
+
+data("discoveries")
+str(discoveries)
+
+data("occupationalStatus")
+str(occupationalStatus)
+
+str(c(5:15))
+str(letters)
+str(3)
+```
