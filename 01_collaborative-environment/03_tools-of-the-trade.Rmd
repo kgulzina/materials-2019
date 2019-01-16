@@ -22,11 +22,15 @@ In this class we will use
 
 - markdown and Rmarkdown, see [Rstudio cheat sheet](https://www.rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf) 
 
-- git & github
+- git & github resources
 
     - Jenny Bryan's: Happy Git with R http://happygitwithr.com/
+    
     - Data Carpentry's tutorials: https://github.com/datacarpentry
+    
     - Reproducible Science Curriculum intitative: https://github.com/Reproducible-Science-Curriculum
+    
+    - Small 'mind map' of git functionality: https://rachelcarmena.github.io
 
 ---
 
