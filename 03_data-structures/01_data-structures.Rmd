@@ -40,11 +40,13 @@ Test whether something has a data type with `is.XXX`, e.g. `is.character("fuzzy 
 
 Data structures hold one or more basic data types and may have multiple dimensions:
 
-1D: Atomic vector (all one type) or List (multiple types)
-2D: Matrix (all one type) or Data frame (multiple types)
-nD: Array (all one type)
+   | One type | Multiple Types
+-- | -------- | --------------
+1D | Atomic vector | List
+2D | Matrix | Data frame
+nD | Array | 
 
-An individual value ("scalar" in other languages) is actualy a length one vector in R
+An individual value ("scalar" in other languages) is a length one vector in R
 
 ---
 
@@ -52,21 +54,96 @@ An individual value ("scalar" in other languages) is actualy a length one vector
 
 `str()` can be used to examine a variable and determine its structure:
 
-```{r}
+```{r, include = F}
+library(tidyverse)
+```
+
+```{r, eval = -1}
 library(tidyverse)
 data("mtcars")
 str(mtcars)
+```
+---
 
+## Basic Data Structures
+
+`str()` can be used to examine a variable and determine its structure:
+```{r}
 data("eurodist")
 str(eurodist)
+```
+---
 
+## Basic Data Structures
+
+`str()` can be used to examine a variable and determine its structure:
+```{r}
 data("discoveries")
 str(discoveries)
+```
+---
 
+## Basic Data Structures
+
+`str()` can be used to examine a variable and determine its structure:
+```{r}
 data("occupationalStatus")
 str(occupationalStatus)
+```
+---
 
+## Basic Data Structures
+
+`str()` can be used to examine a variable and determine its structure:
+```{r}
 str(c(5:15))
-str(letters)
+str(month.name)
 str(3)
+str(mean)
+```
+
+---
+
+## Factors
+
+Some data has both names and a defined numerical ordering:
+```{r}
+month.name
+```
+
+Factors are used to store both the numerical values and the associated labels:
+```{r}
+factor(month.name)
+```
+
+By default, R uses alphabetical order for factors...
+
+```{r}
+months <- factor(month.name, levels = month.name)
+months
+```
+
+
+---
+
+## Factors
+
+You can access the labels of a factor using `levels()`
+```{r}
+levels(months)
+```
+
+You can access the order of the factor using `as.numeric()`:
+```{r}
+as.numeric(months)
+```
+
+By default, `read.csv` stores strings as factors. Turn this behavior off with `stringAsFactors = F`
+
+---
+
+## Factors and read.csv
+
+```{r}
+Ames_Weather <- read.csv("https://bit.ly/2W5XWca")
 ```
