@@ -28,9 +28,11 @@ Name | Example
 numeric | 2.93
 integer | 2
 character | "hello world"
-boolean | TRUE
+logical | TRUE
 
 Convert between data types with `as.XXX`, e.g. `as.numeric("2.394")` or `as.character("3.14159")`
+
+Test whether something has a data type with `is.XXX`, e.g. `is.character("fuzzy puppies")` or `is.logical("abcde")`
 
 ---
 
