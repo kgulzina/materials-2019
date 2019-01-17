@@ -1,0 +1,44 @@
+---
+title: "Complex Data Structures"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: [default, default-fonts, "tweaks.css"]
+    nature:
+      beforeInit: "macros.js"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: center, middle
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+class:primary
+## Setup
+
+Spatial packages require some system dependencies:
+
+<img src="http://icons.iconarchive.com/icons/benjigarner/softdimension/256/Windows-icon.png" width = "10%" style = "vertical-align:middle" alt = "Windows"/>
+Install [Rtools](https://cran.r-project.org/bin/windows/Rtools/)
+
+<img src="http://icons.iconarchive.com/icons/icons8/windows-8/256/Systems-Mac-Os-icon.png" width = "10%" style = "vertical-align:middle" alt = "Mac"/>
+Homebrew install instructions: [sf package github page](https://github.com/r-spatial/sf)
+
+<img src="http://icons.iconarchive.com/icons/tatice/operating-systems/256/Linux-icon.png" style = "float:left;fertical-align:middle" width = "10%" alt = "Linux"/>Install the GDAL (>= 2.0.0), GEOS (>= 3.3.0) and Proj.4 (>= 4.8.0) libraries. There is an [Ubuntu ppa](https://launchpad.net/~ubuntugis/+archive/ubuntu/ubuntugis-unstable) for Ubuntu users.
+
+<br/>
+#### Then
+```{r, eval = F}
+install.packages(c("rgdal", "sp"))
+```
+
+
+---
+
+## Lists
+
+Many complex data types in R are stored within lists.
+
