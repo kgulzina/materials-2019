@@ -144,11 +144,11 @@ str(c(5:15))
 ```
 
 ```r
-str(letters)
+str(month.name)
 ```
 
 ```
-##  chr [1:26] "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" ...
+##  chr [1:12] "January" "February" "March" "April" "May" "June" "July" ...
 ```
 
 ```r
@@ -158,6 +158,159 @@ str(3)
 ```
 ##  num 3
 ```
+
+```r
+str(mean)
+```
+
+```
+## function (x, ...)
+```
+
+---
+
+## Factors
+
+Some data has both names and a defined numerical ordering:
+
+```r
+month.name
+```
+
+```
+##  [1] "January"   "February"  "March"     "April"     "May"      
+##  [6] "June"      "July"      "August"    "September" "October"  
+## [11] "November"  "December"
+```
+
+Factors are used to store both the numerical values and the associated labels:
+
+```r
+factor(month.name)
+```
+
+```
+##  [1] January   February  March     April     May       June      July     
+##  [8] August    September October   November  December 
+## 12 Levels: April August December February January July June March ... September
+```
+
+By default, R uses alphabetical order for factors...
+
+---
+
+## Factors
+
+```r
+factor(month.name)
+```
+
+```
+##  [1] January   February  March     April     May       June      July     
+##  [8] August    September October   November  December 
+## 12 Levels: April August December February January July June March ... September
+```
+
+By default, R uses alphabetical order for factors...
+
+Set level names to override the default ordering 
+
+```r
+months &lt;- factor(month.name, levels = month.name)
+months
+```
+
+```
+##  [1] January   February  March     April     May       June      July     
+##  [8] August    September October   November  December 
+## 12 Levels: January February March April May June July August ... December
+```
+
+
+---
+
+## Factors
+
+You can access the labels of a factor using `levels()`
+
+```r
+levels(months)
+```
+
+```
+##  [1] "January"   "February"  "March"     "April"     "May"      
+##  [6] "June"      "July"      "August"    "September" "October"  
+## [11] "November"  "December"
+```
+
+You can access the order of the factor using `as.numeric()`:
+
+```r
+as.numeric(months)
+```
+
+```
+##  [1]  1  2  3  4  5  6  7  8  9 10 11 12
+```
+
+By default, `read.csv` stores strings as factors. Turn this behavior off with `stringAsFactors = F`
+
+---
+
+## Type Conversions
+
+```r
+# Get a numeric vector
+x &lt;- sample(1:10, 5)
+x
+```
+
+```
+## [1] 10  5  3  1  2
+```
+
+```r
+# Create factor from numeric vector
+fac_x &lt;- factor(x)
+fac_x
+```
+
+```
+## [1] 10 5  3  1  2 
+## Levels: 1 2 3 5 10
+```
+
+```r
+# Convert factor to numeric
+as.numeric(fac_x) # Huh?
+```
+
+```
+## [1] 5 4 3 1 2
+```
+`as.numeric()` converts factors to their level numbers, not to their labels
+
+---
+
+## Type Conversions
+
+
+```r
+as.character(fac_x)
+```
+
+```
+## [1] "10" "5"  "3"  "1"  "2"
+```
+
+```r
+as.numeric(as.character(fac_x))
+```
+
+```
+## [1] 10  5  3  1  2
+```
+`as.character()` extracts the labels; you can then use `as.numeric` to get the labels' numeric value.
     </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({

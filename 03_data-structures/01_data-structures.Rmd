@@ -118,6 +118,16 @@ factor(month.name)
 
 By default, R uses alphabetical order for factors...
 
+---
+
+## Factors
+```{r}
+factor(month.name)
+```
+
+By default, R uses alphabetical order for factors...
+
+Set level names to override the default ordering 
 ```{r}
 months <- factor(month.name, levels = month.name)
 months
@@ -138,12 +148,28 @@ You can access the order of the factor using `as.numeric()`:
 as.numeric(months)
 ```
 
-By default, `read.csv` stores strings as factors. Turn this behavior off with `stringAsFactors = F`
+---
+
+## Type Conversions
+```{r}
+# Get a numeric vector
+x <- sample(1:10, 5)
+x
+# Create factor from numeric vector
+fac_x <- factor(x)
+fac_x
+
+# Convert factor to numeric
+as.numeric(fac_x) # Huh?
+```
+`as.numeric()` converts factors to their level numbers, not to their labels
 
 ---
 
-## Factors and read.csv
+## Type Conversions
 
 ```{r}
-Ames_Weather <- read.csv("https://bit.ly/2W5XWca")
+as.character(fac_x)
+as.numeric(as.character(fac_x))
 ```
+`as.character()` extracts the labels; you can then use `as.numeric` to get the labels' numeric value.
