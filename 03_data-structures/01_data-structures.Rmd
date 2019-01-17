@@ -358,33 +358,40 @@ map_chr(got_chars[1:5], 1)
 class:inverse
 ## Your Turn
 
-The `gh_users` data in the `repurrrsive` package has information about 6 github users. 
-
 ```{r}
 library(dplyr)
 library(purrr)
-library(repurrrsive)
-data(gh_users)
 ```
 
-1. Assemble a data frame of github users column-by-column using appropriate `map_*` functions. Which columns cannot be easily included? (You can skip most of the url columns to save time)
+1. What are the types of each character attribute? (It's ok to look at just the 1st character)
+```{r, eval = F, include = F}
+map(got_chars[[1]], typeof)
+```
 
-```{r}
+2. Which attributes have multiple entries per character? Do any attributes have no entries for all characters?
+
+```{r, include = F, eval = F}
+map_df(got_chars, ~map_dfc(., length))
+```
+
+3. Assemble a data frame of Game of Thrones characters column-by-column using appropriate `map_*` functions. Which columns cannot be easily included? 
+```{r, include = F, eval = F}
+# Really fancy solution...
+test <- map(ok_cols, ~try(map_chr(got_chars, .)))
+failed_cols <- which(map(test, length) == 1)
+bind_cols(test[-failed_cols]) %>%
+  mutate(id = as.integer(id), alive = as.logical(alive))
+
+# Actual solution
 data.frame(
-  login = map_chr(gh_users, "login"),
-  id = map_chr(gh_users, "id"),
-  avatar_url = map_chr(gh_users, "avatar_url"), 
-  gravatar_id = map_chr(gh_users, "gravatar_id"), 
-  url = map_chr(gh_users, "url"),
-  html_url = map_chr(gh_users, "html_url"),
-  followers_url = map_chr(gh_users, "followers_url"), 
-  following_url = map_chr(gh_users, "following_url"), 
-  repos_url = map_chr(gh_users, "repos_url"),
-  events_url = map_chr(gh_users, "events_url"),
-  
-  
+  name = map_chr(got_chars, "name"),
+  url = map_chr(got_chars, "url"),
+  id = map_int(got_chars, "id"),
+  gender = map_chr(got_chars, "gender")
 )
 
 ```
-2. How many of the github users indicate that they are hireable?
-
+4. How many of the characters are still alive?
+```{r, include = F, eval = F}
+sum(map_lgl(got_chars, "alive"))
+```
