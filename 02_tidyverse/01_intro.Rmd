@@ -155,7 +155,8 @@ doesn't change much
 ## Top ten bad days in 2018
 
 first get dates, see [RStudio lubridate cheat sheet](https://github.com/rstudio/cheatsheets/raw/master/lubridate.pdf):
-```{r}
+```{r message = FALSE}
+library(lubridate)
 head(pd$`Date/Time Reported`)
 
 pd$date <- lubridate::mdy_hm(pd$`Date/Time Reported`)
@@ -261,12 +262,20 @@ perday %>%
 
 ## Crime reports over time
 
-```{r, fig.height = 5, fig.width = 8}
+```{r, fig.height = 4, fig.width = 8}
 perday %>%
   mutate(year = lubridate::year(day)) %>%
   ggplot(aes( x = lubridate::yday(day), y = n)) + 
   geom_point() + 
   facet_grid(year~.)
+```
+
+---
+
+# ... it's the Saturdays that are tricky
+
+```{r, fig.height = 4}
+perday %>% ggplot(aes(x = wday(day, label =TRUE), weight = n)) + geom_bar()
 ```
 
 ---
@@ -277,7 +286,7 @@ The files [isu-football-2017.csv](https://raw.githubusercontent.com/Stat585-at-I
 
 Use the data to create the chart below:
 
-```{r, echo = FALSE, fig.height = 5, fig.width = 8}
+```{r, echo = FALSE, fig.height = 4, fig.width = 8}
 
 schedule <- read.csv("../data/isu-football-2018.csv")
 schedule <- schedule %>%
@@ -420,3 +429,5 @@ wkd_weather_cites %>%
 class:center
 
 ![:scale 100%](01_intro_files/figure-html/yourturn-wkd-drugs-weather-1.png)
+
+

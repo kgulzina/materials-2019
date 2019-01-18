@@ -201,6 +201,7 @@ doesn't change much
 first get dates, see [RStudio lubridate cheat sheet](https://github.com/rstudio/cheatsheets/raw/master/lubridate.pdf):
 
 ```r
+library(lubridate)
 head(pd$`Date/Time Reported`)
 ```
 
@@ -408,6 +409,17 @@ perday %&gt;%
 ![](01_intro_files/figure-html/unnamed-chunk-11-1.png)&lt;!-- --&gt;
 
 ---
+
+# ... it's the Saturdays that are tricky
+
+
+```r
+perday %&gt;% ggplot(aes(x = wday(day, label =TRUE), weight = n)) + geom_bar()
+```
+
+![](01_intro_files/figure-html/unnamed-chunk-12-1.png)&lt;!-- --&gt;
+
+---
 class: inverse
 ## Your turn
 
@@ -415,7 +427,7 @@ The files [isu-football-2017.csv](https://raw.githubusercontent.com/Stat585-at-I
 
 Use the data to create the chart below:
 
-![](01_intro_files/figure-html/unnamed-chunk-12-1.png)&lt;!-- --&gt;
+![](01_intro_files/figure-html/unnamed-chunk-13-1.png)&lt;!-- --&gt;
 
 Don't forget to *look at* the chart. What are your main findings?
 
@@ -489,12 +501,14 @@ drug_alcohol_daily &lt;- pd %&gt;%
 
 
 ```r
+game_days &lt;- unique(c(schedule$date, schedule17$date))
+
 # Combine the data with weather data
 wkd_weather_cites &lt;- drug_alcohol_daily %&gt;%
   left_join(ames_weather_daily) %&gt;% 
   mutate(wday = wday(day, label = T)) %&gt;%
   # Show game days
-  mutate(gameday = day %in% schedule$date | day %in% schedule17$date) %&gt;%
+  mutate(gameday = day %in% game_days) %&gt;%
   filter(wday %in% c("Thurs", "Fri", "Sat"))
 ```
 
@@ -512,7 +526,8 @@ wkd_weather_cites %&gt;%
   facet_wrap(~Main, scales = "free_y") + 
   scale_shape_manual(values = c(1, 2)) + 
   ggtitle("Weekend Drug/Alcohol Citations and Weather") + 
-  scale_x_continuous("Temperature (deg F)") + scale_y_continuous("# Citations")
+  scale_x_continuous("Temperature (deg F)") + 
+  scale_y_continuous("# Citations")
 ```
 
 ---
