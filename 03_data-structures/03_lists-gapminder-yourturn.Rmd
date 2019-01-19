@@ -10,17 +10,20 @@ output:
       highlightLines: true
       countIncrementalSlides: false
 ---
-class: center, middle
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, fig.width = 8, fig.height = 4)
+options(width = 60)
 library(tidyverse)
 ```
 
 ## Your turn (10 mins)
 
 - Extract other model diagnostics: find the R square value for each model. Draw a visualization of R square by country - can you see a pattern? What does the pattern mean?
+
 - Extract residuals and fitted values for each of the models and store them in a dataset together with country and continent information. 
+
 - Plot residuals across the years and fit a smooth. What does the pattern mean?
+
 - Draw a scatterplot of predicted Life Expectancy in 2017 versus slope. Compare this to the scatterplot of Intercept versus slope.
 
 ```{r, echo=FALSE}
@@ -38,7 +41,8 @@ countryList <- gapminder %>% tidyr::nest(-country, -continent) %>% mutate(
 ## Extract R square for each model
 
 ```{r fig.height=4.5}
-countryList <- countryList %>% unnest(model %>% purrr::map(broom::glance))
+countryList <- countryList %>% 
+  unnest(model %>% purrr::map(broom::glance))
 countryList$country <- reorder(countryList$country, countryList$r.squared)
 
 countryList %>% 
@@ -53,7 +57,8 @@ countryList %>%
 ## Extract residuals and fitted values
 
 ```{r}
-countryFit <- countryList %>% select(country, continent, data, model) %>%
+countryFit <- countryList %>% 
+  select(country, continent, data, model) %>%
   mutate(fitted = model %>% purrr::map(broom::augment)) %>% 
   select(-model) %>% unnest()
 
