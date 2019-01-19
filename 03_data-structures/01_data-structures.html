@@ -249,7 +249,7 @@ d %&gt;% glimpse()
 ## Variables: 3
 ## $ x   &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 ## $ y   &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
-## $ fac &lt;fct&gt; B, A, A, A, A, C, B, B, A, B
+## $ fac &lt;fct&gt; B, C, B, A, A, B, B, A, C, C
 ```
 
 ---
@@ -862,7 +862,8 @@ head(map)
 
 ```r
 map %&gt;% 
-  ggplot(aes(x = long, y = lat, group = group)) + geom_path()
+  ggplot(aes(x = long, y = lat, group = group)) + 
+  geom_path() + coord_map()
 ```
 
 ![](01_data-structures_files/figure-html/unnamed-chunk-15-1.png)&lt;!-- --&gt;
