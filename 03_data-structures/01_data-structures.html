@@ -20,926 +20,1309 @@ class: center, middle, inverse, title-slide
 class: center, middle
 
 
-class:primary
-## Setup
 
-Spatial packages require some system dependencies:
 
-&lt;img src="http://icons.iconarchive.com/icons/benjigarner/softdimension/256/Windows-icon.png" width = "10%" style = "vertical-align:middle" alt = "Windows"/&gt;
-Install [Rtools](https://cran.r-project.org/bin/windows/Rtools/)
-
-&lt;img src="http://icons.iconarchive.com/icons/icons8/windows-8/256/Systems-Mac-Os-icon.png" width = "10%" style = "vertical-align:middle" alt = "Mac"/&gt;
-Homebrew install instructions: [sf package github page](https://github.com/r-spatial/sf)
-
-&lt;img src="http://icons.iconarchive.com/icons/tatice/operating-systems/256/Linux-icon.png" style = "float:left;fertical-align:middle" width = "10%" alt = "Linux"/&gt;Install the GDAL (&gt;= 2.0.0), GEOS (&gt;= 3.3.0) and Proj.4 (&gt;= 4.8.0) libraries. There is an [Ubuntu ppa](https://launchpad.net/~ubuntugis/+archive/ubuntu/ubuntugis-unstable) for Ubuntu users.
-
-&lt;br/&gt;
-#### Then
-
-```r
-install.packages(c("rgdal", "sp"))
-```
----
-
-# Data Structures in R
+# Data Types
 
 ---
 
-## Outline
+## Basic Data Types
 
-* standard types in R
-* object classes 
-* checking data quality
+Name | Example
+---- | -------
+numeric | 2.93
+integer | 2
+character | "hello world"
+logical | TRUE
 
----
+Convert between data types with `as.XXX`, e.g. `as.numeric("2.394")` or `as.character("3.14159")`
 
-## Basic R objects
-
-* Data types: numeric, integer, character, logical
-* Basic data structures: vector,  matrix, array, factor, list
-
----
-
-## Numeric values
-
-Numeric objects have double precision, i.e. work with 53 bits 
-
-```r
-pi &lt;- as.numeric(gsub(" ","","3.14159 26535 89793 23846 26433"))
-# digits maximum is 22, last few digits are suspicious
-print(pi, digits=22)
-```
-
-```
-## [1] 3.141592653589793115998
-```
-
-Precision is machine dependent:
-
-
-```r
-1 + .Machine$double.eps == 1
-```
-
-```
-## [1] FALSE
-```
-
-```r
-1 + .Machine$double.eps/2 == 1
-```
-
-```
-## [1] TRUE
-```
-
-***
-
-
-```r
-.Machine
-```
-
-```
-## $double.eps
-## [1] 2.220446e-16
-## 
-## $double.neg.eps
-## [1] 1.110223e-16
-## 
-## $double.xmin
-## [1] 2.225074e-308
-## 
-## $double.xmax
-## [1] 1.797693e+308
-## 
-## $double.base
-## [1] 2
-## 
-## $double.digits
-## [1] 53
-## 
-## $double.rounding
-## [1] 5
-## 
-## $double.guard
-## [1] 0
-## 
-## $double.ulp.digits
-## [1] -52
-## 
-## $double.neg.ulp.digits
-## [1] -53
-## 
-## $double.exponent
-## [1] 11
-## 
-## $double.min.exp
-## [1] -1022
-## 
-## $double.max.exp
-## [1] 1024
-## 
-## $integer.max
-## [1] 2147483647
-## 
-## $sizeof.long
-## [1] 8
-## 
-## $sizeof.longlong
-## [1] 8
-## 
-## $sizeof.longdouble
-## [1] 16
-## 
-## $sizeof.pointer
-## [1] 8
-```
+Test whether something has a data type with `is.XXX`, e.g. `is.character("fuzzy puppies")` or `is.logical("abcde")`
 
 ---
 
-## Characters
+## Basic Data Structures
 
-Character covers all text formats.
+Data structures hold one or more basic data types and may have multiple dimensions:
+
+   | One type | Multiple Types
+-- | -------- | --------------
+1D | Atomic vector | List
+2D | Matrix | Data frame
+nD | Array | 
+
+An individual value ("scalar" in other languages) is a length one vector in R
+
+---
+
+## Basic Data Structures
+
+`str()` can be used to examine a variable and determine its structure:
+
+
 
 
 ```r
-x &lt;- "Hello World"
-class(x)
+## library(tidyverse)
+data("mtcars")
+str(mtcars)
 ```
 
 ```
-## [1] "character"
+## 'data.frame':	32 obs. of  11 variables:
+##  $ mpg : num  21 21 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 ...
+##  $ cyl : num  6 6 4 6 8 6 8 4 4 6 ...
+##  $ disp: num  160 160 108 258 360 ...
+##  $ hp  : num  110 110 93 110 175 105 245 62 95 123 ...
+##  $ drat: num  3.9 3.9 3.85 3.08 3.15 2.76 3.21 3.69 3.92 3.92 ...
+##  $ wt  : num  2.62 2.88 2.32 3.21 3.44 ...
+##  $ qsec: num  16.5 17 18.6 19.4 17 ...
+##  $ vs  : num  0 0 1 1 0 1 0 1 1 1 ...
+##  $ am  : num  1 1 1 0 0 0 0 0 0 0 ...
+##  $ gear: num  4 4 4 3 3 3 3 4 4 4 ...
+##  $ carb: num  4 4 1 1 2 1 4 2 2 4 ...
+```
+---
+
+## Basic Data Structures
+
+`str()` can be used to examine a variable and determine its structure:
+
+```r
+data("eurodist")
+str(eurodist)
+```
+
+```
+##  'dist' num [1:210] 3313 2963 3175 3339 2762 ...
+##  - attr(*, "Size")= num 21
+##  - attr(*, "Labels")= chr [1:21] "Athens" "Barcelona" "Brussels" "Calais" ...
+```
+---
+
+## Basic Data Structures
+
+`str()` can be used to examine a variable and determine its structure:
+
+```r
+data("discoveries")
+str(discoveries)
+```
+
+```
+##  Time-Series [1:100] from 1860 to 1959: 5 3 0 2 0 3 2 3 6 1 ...
+```
+---
+
+## Basic Data Structures
+
+`str()` can be used to examine a variable and determine its structure:
+
+```r
+data("occupationalStatus")
+str(occupationalStatus)
+```
+
+```
+##  'table' int [1:8, 1:8] 50 16 12 11 2 12 0 0 19 40 ...
+##  - attr(*, "dimnames")=List of 2
+##   ..$ origin     : chr [1:8] "1" "2" "3" "4" ...
+##   ..$ destination: chr [1:8] "1" "2" "3" "4" ...
+```
+---
+
+## Basic Data Structures
+
+`str()` can be used to examine a variable and determine its structure:
+
+```r
+str(c(5:15))
+```
+
+```
+##  int [1:11] 5 6 7 8 9 10 11 12 13 14 ...
 ```
 
 ```r
-is.character(x)
+str(month.name)
 ```
 
 ```
-## [1] TRUE
+##  chr [1:12] "January" "February" "March" "April" "May" ...
 ```
 
-We will be dealing with text in much more detail when we are looking at regular expressions ...
+```r
+str(3)
+```
+
+```
+##  num 3
+```
+
+```r
+str(mean)
+```
+
+```
+## function (x, ...)
+```
+
+---
+class: center, middle
+# Factors
+
+---
+
+## Factors
+
+Some data has both names and a defined numerical ordering:
+
+```r
+month.name
+```
+
+```
+##  [1] "January"   "February"  "March"     "April"    
+##  [5] "May"       "June"      "July"      "August"   
+##  [9] "September" "October"   "November"  "December"
+```
+
+Factors are used to store both the numerical values and the associated labels:
+
+```r
+factor(month.name)
+```
+
+```
+##  [1] January   February  March     April     May      
+##  [6] June      July      August    September October  
+## [11] November  December 
+## 12 Levels: April August December February January ... September
+```
+
+By default, R uses alphabetical order for factors...
+
+---
+
+## Factors
+
+```r
+factor(month.name)
+```
+
+```
+##  [1] January   February  March     April     May      
+##  [6] June      July      August    September October  
+## [11] November  December 
+## 12 Levels: April August December February January ... September
+```
+
+By default, R uses alphabetical order for factors...
+
+Set level names to override the default ordering 
+
+```r
+months &lt;- factor(month.name, levels = month.name)
+months
+```
+
+```
+##  [1] January   February  March     April     May      
+##  [6] June      July      August    September October  
+## [11] November  December 
+## 12 Levels: January February March April May June ... December
+```
 
 
 ---
 
-## Basic types in R
+## Factors
 
-* **Vectors**: one-dimensional array of values of the same type; vectors have a length, but no dimension
-* **Matrix**: two-dimensional array of values of the same type; matrices have a dimension given as (row, column), length returns the number of items (row x column)
-* **Array**: any higher dimensional array (e.g. output of temperature data from netcdf data)
-
-***
-
+You can access the labels of a factor using `levels()`
 
 ```r
-x &lt;- c("4.5", 3, TRUE, "elephant")
-# The logical value becomes a character
+levels(months)
+```
+
+```
+##  [1] "January"   "February"  "March"     "April"    
+##  [5] "May"       "June"      "July"      "August"   
+##  [9] "September" "October"   "November"  "December"
+```
+
+You can access the order of the factor using `as.numeric()`:
+
+```r
+as.numeric(months)
+```
+
+```
+##  [1]  1  2  3  4  5  6  7  8  9 10 11 12
+```
+
+---
+
+## Type Conversions
+
+```r
+# Get a numeric vector
+x &lt;- sample(1:10, 5)
 x
 ```
 
 ```
-## [1] "4.5"      "3"        "TRUE"     "elephant"
+## [1] 3 4 5 9 7
 ```
 
 ```r
-# note that the cast from logical to 
-# character doesn't survive intact
-as.numeric(x) 
+# Create factor from numeric vector
+fac_x &lt;- factor(x)
+fac_x
 ```
 
 ```
-## Warning: NAs introduced by coercion
-```
-
-```
-## [1] 4.5 3.0  NA  NA
+## [1] 3 4 5 9 7
+## Levels: 3 4 5 7 9
 ```
 
 ```r
-X &lt;- matrix(c(1,2,3, 11,12,13), nrow = 2,
-   ncol=3, byrow=TRUE, dimnames = 
-   list(c("row1", "row2"), c("C.1", "C.2", "C.3")))
-X
+# Convert factor to numeric
+as.numeric(fac_x) # Huh?
 ```
 
 ```
-##      C.1 C.2 C.3
-## row1   1   2   3
-## row2  11  12  13
+## [1] 1 2 3 5 4
 ```
+`as.numeric()` converts factors to their level numbers, not to their labels
+
+---
+
+## Type Conversions
+
+
+```r
+as.character(fac_x)
+```
+
+```
+## [1] "3" "4" "5" "9" "7"
+```
+
+```r
+as.numeric(as.character(fac_x))
+```
+
+```
+## [1] 3 4 5 9 7
+```
+`as.character()` extracts the labels; you can then use `as.numeric` to get the labels' numeric value.
+
+---
+class:center, middle
+# Lists
 
 ---
 
 ## Data frames
 
-Data frame: collection of vectors of same length but possibly different types
 
 ```r
-L3 &lt;- LETTERS[1:3]
-d &lt;- data.frame(cbind(x=1, y=1:10), 
-     fac=sample(L3, 10, replace=TRUE))
-d %&gt;% glimpse()
+simple_df &lt;- data.frame(letters = letters, order = 1:26)
+str(simple_df)
 ```
 
 ```
-## Observations: 10
-## Variables: 3
-## $ x   &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-## $ y   &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
-## $ fac &lt;fct&gt; B, C, B, A, A, B, B, A, C, C
+## 'data.frame':	26 obs. of  2 variables:
+##  $ letters: Factor w/ 26 levels "a","b","c","d",..: 1 2 3 4 5 6 7 8 9 10 ...
+##  $ order  : int  1 2 3 4 5 6 7 8 9 10 ...
+```
+
+```r
+mode(simple_df)
+```
+
+```
+## [1] "list"
+```
+
+Data frames are lists of vectors where each vector is constrained to have the same length
+
+---
+
+## "Hidden" Lists
+
+We could convert the data frame to a list by changing its class:
+
+
+```r
+class(simple_df) &lt;- "list"
+simple_df
+```
+
+```
+## $letters
+##  [1] a b c d e f g h i j k l m n o p q r s t u v w x y z
+## 26 Levels: a b c d e f g h i j k l m n o p q r s t u ... z
+## 
+## $order
+##  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18
+## [19] 19 20 21 22 23 24 25 26
+## 
+## attr(,"row.names")
+##  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18
+## [19] 19 20 21 22 23 24 25 26
 ```
 
 ---
 
-## Lists
-
-* lists allow the most flexibility, i.e. are not very structured. 
-* a list element can be anything, including another list
-* very useful (and common) as output from analytic methods
-
+## Examining Lists
 
 ```r
-mod&lt;-glm(mpg~cyl+disp+hp+drat+wt, data=mtcars)
-head(str(mod))
+library(repurrrsive)
+data(got_chars) # Game of Thrones characters
+str(got_chars)
 ```
 
 ```
 ## List of 30
-##  $ coefficients     : Named num [1:6] 36.0084 -1.1075 0.0124 -0.024 0.9522 ...
-##   ..- attr(*, "names")= chr [1:6] "(Intercept)" "cyl" "disp" "hp" ...
-##  $ residuals        : Named num [1:32] -1.788 -0.852 -3.023 0.367 0.943 ...
-##   ..- attr(*, "names")= chr [1:32] "Mazda RX4" "Mazda RX4 Wag" "Datsun 710" "Hornet 4 Drive" ...
-##  $ fitted.values    : Named num [1:32] 22.8 21.9 25.8 21 17.8 ...
-##   ..- attr(*, "names")= chr [1:32] "Mazda RX4" "Mazda RX4 Wag" "Datsun 710" "Hornet 4 Drive" ...
-##  $ effects          : Named num [1:32] -113.65 -28.6 6.13 -3.06 -4.06 ...
-##   ..- attr(*, "names")= chr [1:32] "(Intercept)" "cyl" "disp" "hp" ...
-##  $ R                : num [1:6, 1:6] -5.66 0 0 0 0 ...
-##   ..- attr(*, "dimnames")=List of 2
-##   .. ..$ : chr [1:6] "(Intercept)" "cyl" "disp" "hp" ...
-##   .. ..$ : chr [1:6] "(Intercept)" "cyl" "disp" "hp" ...
-##  $ rank             : int 6
-##  $ qr               :List of 5
-##   ..$ qr   : num [1:32, 1:6] -5.657 0.177 0.177 0.177 0.177 ...
-##   .. ..- attr(*, "dimnames")=List of 2
-##   .. .. ..$ : chr [1:32] "Mazda RX4" "Mazda RX4 Wag" "Datsun 710" "Hornet 4 Drive" ...
-##   .. .. ..$ : chr [1:6] "(Intercept)" "cyl" "disp" "hp" ...
-##   ..$ rank : int 6
-##   ..$ qraux: num [1:6] 1.18 1.02 1.11 1.17 1.08 ...
-##   ..$ pivot: int [1:6] 1 2 3 4 5 6
-##   ..$ tol  : num 1e-11
-##   ..- attr(*, "class")= chr "qr"
-##  $ family           :List of 11
-##   ..$ family    : chr "gaussian"
-##   ..$ link      : chr "identity"
-##   ..$ linkfun   :function (mu)  
-##   ..$ linkinv   :function (eta)  
-##   ..$ variance  :function (mu)  
-##   ..$ dev.resids:function (y, mu, wt)  
-##   ..$ aic       :function (y, n, mu, wt, dev)  
-##   ..$ mu.eta    :function (eta)  
-##   ..$ initialize:  expression({  n &lt;- rep.int(1, nobs)  if (is.null(etastart) &amp;&amp; is.null(start) &amp;&amp; is.null(mustart) &amp;&amp;  ((family$lin| __truncated__
-##   ..$ validmu   :function (mu)  
-##   ..$ valideta  :function (eta)  
-##   ..- attr(*, "class")= chr "family"
-##  $ linear.predictors: Named num [1:32] 22.8 21.9 25.8 21 17.8 ...
-##   ..- attr(*, "names")= chr [1:32] "Mazda RX4" "Mazda RX4 Wag" "Datsun 710" "Hornet 4 Drive" ...
-##  $ deviance         : num 167
-##  $ aic              : num 158
-##  $ null.deviance    : num 1126
-##  $ iter             : int 2
-##  $ weights          : Named num [1:32] 1 1 1 1 1 1 1 1 1 1 ...
-##   ..- attr(*, "names")= chr [1:32] "Mazda RX4" "Mazda RX4 Wag" "Datsun 710" "Hornet 4 Drive" ...
-##  $ prior.weights    : Named num [1:32] 1 1 1 1 1 1 1 1 1 1 ...
-##   ..- attr(*, "names")= chr [1:32] "Mazda RX4" "Mazda RX4 Wag" "Datsun 710" "Hornet 4 Drive" ...
-##  $ df.residual      : int 26
-##  $ df.null          : int 31
-##  $ y                : Named num [1:32] 21 21 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 ...
-##   ..- attr(*, "names")= chr [1:32] "Mazda RX4" "Mazda RX4 Wag" "Datsun 710" "Hornet 4 Drive" ...
-##  $ converged        : logi TRUE
-##  $ boundary         : logi FALSE
-##  $ model            :'data.frame':	32 obs. of  6 variables:
-##   ..$ mpg : num [1:32] 21 21 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 ...
-##   ..$ cyl : num [1:32] 6 6 4 6 8 6 8 4 4 6 ...
-##   ..$ disp: num [1:32] 160 160 108 258 360 ...
-##   ..$ hp  : num [1:32] 110 110 93 110 175 105 245 62 95 123 ...
-##   ..$ drat: num [1:32] 3.9 3.9 3.85 3.08 3.15 2.76 3.21 3.69 3.92 3.92 ...
-##   ..$ wt  : num [1:32] 2.62 2.88 2.32 3.21 3.44 ...
-##   ..- attr(*, "terms")=Classes 'terms', 'formula'  language mpg ~ cyl + disp + hp + drat + wt
-##   .. .. ..- attr(*, "variables")= language list(mpg, cyl, disp, hp, drat, wt)
-##   .. .. ..- attr(*, "factors")= int [1:6, 1:5] 0 1 0 0 0 0 0 0 1 0 ...
-##   .. .. .. ..- attr(*, "dimnames")=List of 2
-##   .. .. .. .. ..$ : chr [1:6] "mpg" "cyl" "disp" "hp" ...
-##   .. .. .. .. ..$ : chr [1:5] "cyl" "disp" "hp" "drat" ...
-##   .. .. ..- attr(*, "term.labels")= chr [1:5] "cyl" "disp" "hp" "drat" ...
-##   .. .. ..- attr(*, "order")= int [1:5] 1 1 1 1 1
-##   .. .. ..- attr(*, "intercept")= int 1
-##   .. .. ..- attr(*, "response")= int 1
-##   .. .. ..- attr(*, ".Environment")=&lt;environment: R_GlobalEnv&gt; 
-##   .. .. ..- attr(*, "predvars")= language list(mpg, cyl, disp, hp, drat, wt)
-##   .. .. ..- attr(*, "dataClasses")= Named chr [1:6] "numeric" "numeric" "numeric" "numeric" ...
-##   .. .. .. ..- attr(*, "names")= chr [1:6] "mpg" "cyl" "disp" "hp" ...
-##  $ call             : language glm(formula = mpg ~ cyl + disp + hp + drat + wt, data = mtcars)
-##  $ formula          :Class 'formula'  language mpg ~ cyl + disp + hp + drat + wt
-##   .. ..- attr(*, ".Environment")=&lt;environment: R_GlobalEnv&gt; 
-##  $ terms            :Classes 'terms', 'formula'  language mpg ~ cyl + disp + hp + drat + wt
-##   .. ..- attr(*, "variables")= language list(mpg, cyl, disp, hp, drat, wt)
-##   .. ..- attr(*, "factors")= int [1:6, 1:5] 0 1 0 0 0 0 0 0 1 0 ...
-##   .. .. ..- attr(*, "dimnames")=List of 2
-##   .. .. .. ..$ : chr [1:6] "mpg" "cyl" "disp" "hp" ...
-##   .. .. .. ..$ : chr [1:5] "cyl" "disp" "hp" "drat" ...
-##   .. ..- attr(*, "term.labels")= chr [1:5] "cyl" "disp" "hp" "drat" ...
-##   .. ..- attr(*, "order")= int [1:5] 1 1 1 1 1
-##   .. ..- attr(*, "intercept")= int 1
-##   .. ..- attr(*, "response")= int 1
-##   .. ..- attr(*, ".Environment")=&lt;environment: R_GlobalEnv&gt; 
-##   .. ..- attr(*, "predvars")= language list(mpg, cyl, disp, hp, drat, wt)
-##   .. ..- attr(*, "dataClasses")= Named chr [1:6] "numeric" "numeric" "numeric" "numeric" ...
-##   .. .. ..- attr(*, "names")= chr [1:6] "mpg" "cyl" "disp" "hp" ...
-##  $ data             :'data.frame':	32 obs. of  11 variables:
-##   ..$ mpg : num [1:32] 21 21 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 ...
-##   ..$ cyl : num [1:32] 6 6 4 6 8 6 8 4 4 6 ...
-##   ..$ disp: num [1:32] 160 160 108 258 360 ...
-##   ..$ hp  : num [1:32] 110 110 93 110 175 105 245 62 95 123 ...
-##   ..$ drat: num [1:32] 3.9 3.9 3.85 3.08 3.15 2.76 3.21 3.69 3.92 3.92 ...
-##   ..$ wt  : num [1:32] 2.62 2.88 2.32 3.21 3.44 ...
-##   ..$ qsec: num [1:32] 16.5 17 18.6 19.4 17 ...
-##   ..$ vs  : num [1:32] 0 0 1 1 0 1 0 1 1 1 ...
-##   ..$ am  : num [1:32] 1 1 1 0 0 0 0 0 0 0 ...
-##   ..$ gear: num [1:32] 4 4 4 3 3 3 3 4 4 4 ...
-##   ..$ carb: num [1:32] 4 4 1 1 2 1 4 2 2 4 ...
-##  $ offset           : NULL
-##  $ control          :List of 3
-##   ..$ epsilon: num 1e-08
-##   ..$ maxit  : num 25
-##   ..$ trace  : logi FALSE
-##  $ method           : chr "glm.fit"
-##  $ contrasts        : NULL
-##  $ xlevels          : Named list()
-##  - attr(*, "class")= chr [1:2] "glm" "lm"
-```
-
-```
-## NULL
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/1022"
+##   ..$ id         : int 1022
+##   ..$ name       : chr "Theon Greyjoy"
+##   ..$ gender     : chr "Male"
+##   ..$ culture    : chr "Ironborn"
+##   ..$ born       : chr "In 278 AC or 279 AC, at Pyke"
+##   ..$ died       : chr ""
+##   ..$ alive      : logi TRUE
+##   ..$ titles     : chr [1:3] "Prince of Winterfell" "Captain of Sea Bitch" "Lord of the Iron Islands (by law of the green lands)"
+##   ..$ aliases    : chr [1:4] "Prince of Fools" "Theon Turncloak" "Reek" "Theon Kinslayer"
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr ""
+##   ..$ allegiances: chr "House Greyjoy of Pyke"
+##   ..$ books      : chr [1:3] "A Game of Thrones" "A Storm of Swords" "A Feast for Crows"
+##   ..$ povBooks   : chr [1:2] "A Clash of Kings" "A Dance with Dragons"
+##   ..$ tvSeries   : chr [1:6] "Season 1" "Season 2" "Season 3" "Season 4" ...
+##   ..$ playedBy   : chr "Alfie Allen"
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/1052"
+##   ..$ id         : int 1052
+##   ..$ name       : chr "Tyrion Lannister"
+##   ..$ gender     : chr "Male"
+##   ..$ culture    : chr ""
+##   ..$ born       : chr "In 273 AC, at Casterly Rock"
+##   ..$ died       : chr ""
+##   ..$ alive      : logi TRUE
+##   ..$ titles     : chr [1:2] "Acting Hand of the King (former)" "Master of Coin (former)"
+##   ..$ aliases    : chr [1:11] "The Imp" "Halfman" "The boyman" "Giant of Lannister" ...
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr "https://www.anapioficeandfire.com/api/characters/2044"
+##   ..$ allegiances: chr "House Lannister of Casterly Rock"
+##   ..$ books      : chr [1:2] "A Feast for Crows" "The World of Ice and Fire"
+##   ..$ povBooks   : chr [1:4] "A Game of Thrones" "A Clash of Kings" "A Storm of Swords" "A Dance with Dragons"
+##   ..$ tvSeries   : chr [1:6] "Season 1" "Season 2" "Season 3" "Season 4" ...
+##   ..$ playedBy   : chr "Peter Dinklage"
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/1074"
+##   ..$ id         : int 1074
+##   ..$ name       : chr "Victarion Greyjoy"
+##   ..$ gender     : chr "Male"
+##   ..$ culture    : chr "Ironborn"
+##   ..$ born       : chr "In 268 AC or before, at Pyke"
+##   ..$ died       : chr ""
+##   ..$ alive      : logi TRUE
+##   ..$ titles     : chr [1:2] "Lord Captain of the Iron Fleet" "Master of the Iron Victory"
+##   ..$ aliases    : chr "The Iron Captain"
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr ""
+##   ..$ allegiances: chr "House Greyjoy of Pyke"
+##   ..$ books      : chr [1:3] "A Game of Thrones" "A Clash of Kings" "A Storm of Swords"
+##   ..$ povBooks   : chr [1:2] "A Feast for Crows" "A Dance with Dragons"
+##   ..$ tvSeries   : chr ""
+##   ..$ playedBy   : chr ""
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/1109"
+##   ..$ id         : int 1109
+##   ..$ name       : chr "Will"
+##   ..$ gender     : chr "Male"
+##   ..$ culture    : chr ""
+##   ..$ born       : chr ""
+##   ..$ died       : chr "In 297 AC, at Haunted Forest"
+##   ..$ alive      : logi FALSE
+##   ..$ titles     : chr ""
+##   ..$ aliases    : chr ""
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr ""
+##   ..$ allegiances: list()
+##   ..$ books      : chr "A Clash of Kings"
+##   ..$ povBooks   : chr "A Game of Thrones"
+##   ..$ tvSeries   : chr ""
+##   ..$ playedBy   : chr "Bronson Webb"
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/1166"
+##   ..$ id         : int 1166
+##   ..$ name       : chr "Areo Hotah"
+##   ..$ gender     : chr "Male"
+##   ..$ culture    : chr "Norvoshi"
+##   ..$ born       : chr "In 257 AC or before, at Norvos"
+##   ..$ died       : chr ""
+##   ..$ alive      : logi TRUE
+##   ..$ titles     : chr "Captain of the Guard at Sunspear"
+##   ..$ aliases    : chr ""
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr ""
+##   ..$ allegiances: chr "House Nymeros Martell of Sunspear"
+##   ..$ books      : chr [1:3] "A Game of Thrones" "A Clash of Kings" "A Storm of Swords"
+##   ..$ povBooks   : chr [1:2] "A Feast for Crows" "A Dance with Dragons"
+##   ..$ tvSeries   : chr [1:2] "Season 5" "Season 6"
+##   ..$ playedBy   : chr "DeObia Oparei"
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/1267"
+##   ..$ id         : int 1267
+##   ..$ name       : chr "Chett"
+##   ..$ gender     : chr "Male"
+##   ..$ culture    : chr ""
+##   ..$ born       : chr "At Hag's Mire"
+##   ..$ died       : chr "In 299 AC, at Fist of the First Men"
+##   ..$ alive      : logi FALSE
+##   ..$ titles     : chr ""
+##   ..$ aliases    : chr ""
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr ""
+##   ..$ allegiances: list()
+##   ..$ books      : chr [1:2] "A Game of Thrones" "A Clash of Kings"
+##   ..$ povBooks   : chr "A Storm of Swords"
+##   ..$ tvSeries   : chr ""
+##   ..$ playedBy   : chr ""
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/1295"
+##   ..$ id         : int 1295
+##   ..$ name       : chr "Cressen"
+##   ..$ gender     : chr "Male"
+##   ..$ culture    : chr ""
+##   ..$ born       : chr "In 219 AC or 220 AC"
+##   ..$ died       : chr "In 299 AC, at Dragonstone"
+##   ..$ alive      : logi FALSE
+##   ..$ titles     : chr "Maester"
+##   ..$ aliases    : chr ""
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr ""
+##   ..$ allegiances: list()
+##   ..$ books      : chr [1:2] "A Storm of Swords" "A Feast for Crows"
+##   ..$ povBooks   : chr "A Clash of Kings"
+##   ..$ tvSeries   : chr "Season 2"
+##   ..$ playedBy   : chr "Oliver Ford"
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/130"
+##   ..$ id         : int 130
+##   ..$ name       : chr "Arianne Martell"
+##   ..$ gender     : chr "Female"
+##   ..$ culture    : chr "Dornish"
+##   ..$ born       : chr "In 276 AC, at Sunspear"
+##   ..$ died       : chr ""
+##   ..$ alive      : logi TRUE
+##   ..$ titles     : chr "Princess of Dorne"
+##   ..$ aliases    : chr ""
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr ""
+##   ..$ allegiances: chr "House Nymeros Martell of Sunspear"
+##   ..$ books      : chr [1:4] "A Game of Thrones" "A Clash of Kings" "A Storm of Swords" "A Dance with Dragons"
+##   ..$ povBooks   : chr "A Feast for Crows"
+##   ..$ tvSeries   : chr ""
+##   ..$ playedBy   : chr ""
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/1303"
+##   ..$ id         : int 1303
+##   ..$ name       : chr "Daenerys Targaryen"
+##   ..$ gender     : chr "Female"
+##   ..$ culture    : chr "Valyrian"
+##   ..$ born       : chr "In 284 AC, at Dragonstone"
+##   ..$ died       : chr ""
+##   ..$ alive      : logi TRUE
+##   ..$ titles     : chr [1:5] "Queen of the Andals and the Rhoynar and the First Men, Lord of the Seven Kingdoms" "Khaleesi of the Great Grass Sea" "Breaker of Shackles/Chains" "Queen of Meereen" ...
+##   ..$ aliases    : chr [1:11] "Dany" "Daenerys Stormborn" "The Unburnt" "Mother of Dragons" ...
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr "https://www.anapioficeandfire.com/api/characters/1346"
+##   ..$ allegiances: chr "House Targaryen of King's Landing"
+##   ..$ books      : chr "A Feast for Crows"
+##   ..$ povBooks   : chr [1:4] "A Game of Thrones" "A Clash of Kings" "A Storm of Swords" "A Dance with Dragons"
+##   ..$ tvSeries   : chr [1:6] "Season 1" "Season 2" "Season 3" "Season 4" ...
+##   ..$ playedBy   : chr "Emilia Clarke"
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/1319"
+##   ..$ id         : int 1319
+##   ..$ name       : chr "Davos Seaworth"
+##   ..$ gender     : chr "Male"
+##   ..$ culture    : chr "Westeros"
+##   ..$ born       : chr "In 260 AC or before, at King's Landing"
+##   ..$ died       : chr ""
+##   ..$ alive      : logi TRUE
+##   ..$ titles     : chr [1:4] "Ser" "Lord of the Rainwood" "Admiral of the Narrow Sea" "Hand of the King"
+##   ..$ aliases    : chr [1:5] "Onion Knight" "Davos Shorthand" "Ser Onions" "Onion Lord" ...
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr "https://www.anapioficeandfire.com/api/characters/1676"
+##   ..$ allegiances: chr [1:2] "House Baratheon of Dragonstone" "House Seaworth of Cape Wrath"
+##   ..$ books      : chr "A Feast for Crows"
+##   ..$ povBooks   : chr [1:3] "A Clash of Kings" "A Storm of Swords" "A Dance with Dragons"
+##   ..$ tvSeries   : chr [1:5] "Season 2" "Season 3" "Season 4" "Season 5" ...
+##   ..$ playedBy   : chr "Liam Cunningham"
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/148"
+##   ..$ id         : int 148
+##   ..$ name       : chr "Arya Stark"
+##   ..$ gender     : chr "Female"
+##   ..$ culture    : chr "Northmen"
+##   ..$ born       : chr "In 289 AC, at Winterfell"
+##   ..$ died       : chr ""
+##   ..$ alive      : logi TRUE
+##   ..$ titles     : chr "Princess"
+##   ..$ aliases    : chr [1:16] "Arya Horseface" "Arya Underfoot" "Arry" "Lumpyface" ...
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr ""
+##   ..$ allegiances: chr "House Stark of Winterfell"
+##   ..$ books      : list()
+##   ..$ povBooks   : chr [1:5] "A Game of Thrones" "A Clash of Kings" "A Storm of Swords" "A Feast for Crows" ...
+##   ..$ tvSeries   : chr [1:6] "Season 1" "Season 2" "Season 3" "Season 4" ...
+##   ..$ playedBy   : chr "Maisie Williams"
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/149"
+##   ..$ id         : int 149
+##   ..$ name       : chr "Arys Oakheart"
+##   ..$ gender     : chr "Male"
+##   ..$ culture    : chr "Reach"
+##   ..$ born       : chr "At Old Oak"
+##   ..$ died       : chr "In 300 AC, at the Greenblood"
+##   ..$ alive      : logi FALSE
+##   ..$ titles     : chr "Ser"
+##   ..$ aliases    : chr ""
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr ""
+##   ..$ allegiances: chr "House Oakheart of Old Oak"
+##   ..$ books      : chr [1:4] "A Game of Thrones" "A Clash of Kings" "A Storm of Swords" "A Dance with Dragons"
+##   ..$ povBooks   : chr "A Feast for Crows"
+##   ..$ tvSeries   : chr ""
+##   ..$ playedBy   : chr ""
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/150"
+##   ..$ id         : int 150
+##   ..$ name       : chr "Asha Greyjoy"
+##   ..$ gender     : chr "Female"
+##   ..$ culture    : chr "Ironborn"
+##   ..$ born       : chr "In 275 AC or 276 AC, at Pyke"
+##   ..$ died       : chr ""
+##   ..$ alive      : logi TRUE
+##   ..$ titles     : chr [1:3] "Princess" "Captain of the Black Wind" "Conqueror of Deepwood Motte"
+##   ..$ aliases    : chr [1:2] "Esgred" "The Kraken's Daughter"
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr "https://www.anapioficeandfire.com/api/characters/1372"
+##   ..$ allegiances: chr [1:2] "House Greyjoy of Pyke" "House Ironmaker"
+##   ..$ books      : chr [1:2] "A Game of Thrones" "A Clash of Kings"
+##   ..$ povBooks   : chr [1:2] "A Feast for Crows" "A Dance with Dragons"
+##   ..$ tvSeries   : chr [1:3] "Season 2" "Season 3" "Season 4"
+##   ..$ playedBy   : chr "Gemma Whelan"
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/168"
+##   ..$ id         : int 168
+##   ..$ name       : chr "Barristan Selmy"
+##   ..$ gender     : chr "Male"
+##   ..$ culture    : chr "Westeros"
+##   ..$ born       : chr "In 237 AC"
+##   ..$ died       : chr ""
+##   ..$ alive      : logi TRUE
+##   ..$ titles     : chr [1:2] "Ser" "Hand of the Queen"
+##   ..$ aliases    : chr [1:5] "Barristan the Bold" "Arstan Whitebeard" "Ser Grandfather" "Barristan the Old" ...
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr ""
+##   ..$ allegiances: chr [1:2] "House Selmy of Harvest Hall" "House Targaryen of King's Landing"
+##   ..$ books      : chr [1:5] "A Game of Thrones" "A Clash of Kings" "A Storm of Swords" "A Feast for Crows" ...
+##   ..$ povBooks   : chr "A Dance with Dragons"
+##   ..$ tvSeries   : chr [1:4] "Season 1" "Season 3" "Season 4" "Season 5"
+##   ..$ playedBy   : chr "Ian McElhinney"
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/2066"
+##   ..$ id         : int 2066
+##   ..$ name       : chr "Varamyr"
+##   ..$ gender     : chr "Male"
+##   ..$ culture    : chr "Free Folk"
+##   ..$ born       : chr "At a village Beyond the Wall"
+##   ..$ died       : chr "In 300 AC, at a village Beyond the Wall"
+##   ..$ alive      : logi FALSE
+##   ..$ titles     : chr ""
+##   ..$ aliases    : chr [1:3] "Varamyr Sixskins" "Haggon" "Lump"
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr ""
+##   ..$ allegiances: list()
+##   ..$ books      : chr "A Storm of Swords"
+##   ..$ povBooks   : chr "A Dance with Dragons"
+##   ..$ tvSeries   : chr ""
+##   ..$ playedBy   : chr ""
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/208"
+##   ..$ id         : int 208
+##   ..$ name       : chr "Brandon Stark"
+##   ..$ gender     : chr "Male"
+##   ..$ culture    : chr "Northmen"
+##   ..$ born       : chr "In 290 AC, at Winterfell"
+##   ..$ died       : chr ""
+##   ..$ alive      : logi TRUE
+##   ..$ titles     : chr "Prince of Winterfell"
+##   ..$ aliases    : chr [1:3] "Bran" "Bran the Broken" "The Winged Wolf"
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr ""
+##   ..$ allegiances: chr "House Stark of Winterfell"
+##   ..$ books      : chr "A Feast for Crows"
+##   ..$ povBooks   : chr [1:4] "A Game of Thrones" "A Clash of Kings" "A Storm of Swords" "A Dance with Dragons"
+##   ..$ tvSeries   : chr [1:5] "Season 1" "Season 2" "Season 3" "Season 4" ...
+##   ..$ playedBy   : chr "Isaac Hempstead-Wright"
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/216"
+##   ..$ id         : int 216
+##   ..$ name       : chr "Brienne of Tarth"
+##   ..$ gender     : chr "Female"
+##   ..$ culture    : chr ""
+##   ..$ born       : chr "In 280 AC"
+##   ..$ died       : chr ""
+##   ..$ alive      : logi TRUE
+##   ..$ titles     : chr ""
+##   ..$ aliases    : chr [1:3] "The Maid of Tarth" "Brienne the Beauty" "Brienne the Blue"
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr ""
+##   ..$ allegiances: chr [1:3] "House Baratheon of Storm's End" "House Stark of Winterfell" "House Tarth of Evenfall Hall"
+##   ..$ books      : chr [1:3] "A Clash of Kings" "A Storm of Swords" "A Dance with Dragons"
+##   ..$ povBooks   : chr "A Feast for Crows"
+##   ..$ tvSeries   : chr [1:5] "Season 2" "Season 3" "Season 4" "Season 5" ...
+##   ..$ playedBy   : chr "Gwendoline Christie"
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/232"
+##   ..$ id         : int 232
+##   ..$ name       : chr "Catelyn Stark"
+##   ..$ gender     : chr "Female"
+##   ..$ culture    : chr "Rivermen"
+##   ..$ born       : chr "In 264 AC, at Riverrun"
+##   ..$ died       : chr "In 299 AC, at the Twins"
+##   ..$ alive      : logi FALSE
+##   ..$ titles     : chr "Lady of Winterfell"
+##   ..$ aliases    : chr [1:5] "Catelyn Tully" "Lady Stoneheart" "The Silent Sistet" "Mother Mercilesr" ...
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr "https://www.anapioficeandfire.com/api/characters/339"
+##   ..$ allegiances: chr [1:2] "House Stark of Winterfell" "House Tully of Riverrun"
+##   ..$ books      : chr [1:2] "A Feast for Crows" "A Dance with Dragons"
+##   ..$ povBooks   : chr [1:3] "A Game of Thrones" "A Clash of Kings" "A Storm of Swords"
+##   ..$ tvSeries   : chr [1:3] "Season 1" "Season 2" "Season 3"
+##   ..$ playedBy   : chr "Michelle Fairley"
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/238"
+##   ..$ id         : int 238
+##   ..$ name       : chr "Cersei Lannister"
+##   ..$ gender     : chr "Female"
+##   ..$ culture    : chr "Westerman"
+##   ..$ born       : chr "In 266 AC, at Casterly Rock"
+##   ..$ died       : chr ""
+##   ..$ alive      : logi TRUE
+##   ..$ titles     : chr [1:5] "Light of the West" "Queen Dowager" "Protector of the Realm" "Lady of Casterly Rock" ...
+##   ..$ aliases    : list()
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr "https://www.anapioficeandfire.com/api/characters/901"
+##   ..$ allegiances: chr "House Lannister of Casterly Rock"
+##   ..$ books      : chr [1:3] "A Game of Thrones" "A Clash of Kings" "A Storm of Swords"
+##   ..$ povBooks   : chr [1:2] "A Feast for Crows" "A Dance with Dragons"
+##   ..$ tvSeries   : chr [1:6] "Season 1" "Season 2" "Season 3" "Season 4" ...
+##   ..$ playedBy   : chr "Lena Headey"
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/339"
+##   ..$ id         : int 339
+##   ..$ name       : chr "Eddard Stark"
+##   ..$ gender     : chr "Male"
+##   ..$ culture    : chr "Northmen"
+##   ..$ born       : chr "In 263 AC, at Winterfell"
+##   ..$ died       : chr "In 299 AC, at Great Sept of Baelor in King's Landing"
+##   ..$ alive      : logi FALSE
+##   ..$ titles     : chr [1:5] "Lord of Winterfell" "Warden of the North" "Hand of the King" "Protector of the Realm" ...
+##   ..$ aliases    : chr [1:3] "Ned" "The Ned" "The Quiet Wolf"
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr "https://www.anapioficeandfire.com/api/characters/232"
+##   ..$ allegiances: chr "House Stark of Winterfell"
+##   ..$ books      : chr [1:5] "A Clash of Kings" "A Storm of Swords" "A Feast for Crows" "A Dance with Dragons" ...
+##   ..$ povBooks   : chr "A Game of Thrones"
+##   ..$ tvSeries   : chr [1:2] "Season 1" "Season 6"
+##   ..$ playedBy   : chr [1:3] "Sean Bean" "Sebastian Croft" "Robert Aramayo"
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/529"
+##   ..$ id         : int 529
+##   ..$ name       : chr "Jaime Lannister"
+##   ..$ gender     : chr "Male"
+##   ..$ culture    : chr "Westerlands"
+##   ..$ born       : chr "In 266 AC, at Casterly Rock"
+##   ..$ died       : chr ""
+##   ..$ alive      : logi TRUE
+##   ..$ titles     : chr [1:3] "Ser" "Lord Commander of the Kingsguard" "Warden of the East (formerly)"
+##   ..$ aliases    : chr [1:4] "The Kingslayer" "The Lion of Lannister" "The Young Lion" "Cripple"
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr ""
+##   ..$ allegiances: chr "House Lannister of Casterly Rock"
+##   ..$ books      : chr [1:2] "A Game of Thrones" "A Clash of Kings"
+##   ..$ povBooks   : chr [1:3] "A Storm of Swords" "A Feast for Crows" "A Dance with Dragons"
+##   ..$ tvSeries   : chr [1:5] "Season 1" "Season 2" "Season 3" "Season 4" ...
+##   ..$ playedBy   : chr "Nikolaj Coster-Waldau"
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/576"
+##   ..$ id         : int 576
+##   ..$ name       : chr "Jon Connington"
+##   ..$ gender     : chr "Male"
+##   ..$ culture    : chr "Stormlands"
+##   ..$ born       : chr "In or between 263 AC and 265 AC"
+##   ..$ died       : chr ""
+##   ..$ alive      : logi TRUE
+##   ..$ titles     : chr [1:3] "Lord of Griffin's Roost" "Hand of the King" "Hand of the True King"
+##   ..$ aliases    : chr "Griffthe Mad King's Hand"
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr ""
+##   ..$ allegiances: chr [1:2] "House Connington of Griffin's Roost" "House Targaryen of King's Landing"
+##   ..$ books      : chr [1:3] "A Storm of Swords" "A Feast for Crows" "The World of Ice and Fire"
+##   ..$ povBooks   : chr "A Dance with Dragons"
+##   ..$ tvSeries   : chr ""
+##   ..$ playedBy   : chr ""
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/583"
+##   ..$ id         : int 583
+##   ..$ name       : chr "Jon Snow"
+##   ..$ gender     : chr "Male"
+##   ..$ culture    : chr "Northmen"
+##   ..$ born       : chr "In 283 AC"
+##   ..$ died       : chr ""
+##   ..$ alive      : logi TRUE
+##   ..$ titles     : chr "Lord Commander of the Night's Watch"
+##   ..$ aliases    : chr [1:8] "Lord Snow" "Ned Stark's Bastard" "The Snow of Winterfell" "The Crow-Come-Over" ...
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr ""
+##   ..$ allegiances: chr "House Stark of Winterfell"
+##   ..$ books      : chr "A Feast for Crows"
+##   ..$ povBooks   : chr [1:4] "A Game of Thrones" "A Clash of Kings" "A Storm of Swords" "A Dance with Dragons"
+##   ..$ tvSeries   : chr [1:6] "Season 1" "Season 2" "Season 3" "Season 4" ...
+##   ..$ playedBy   : chr "Kit Harington"
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/60"
+##   ..$ id         : int 60
+##   ..$ name       : chr "Aeron Greyjoy"
+##   ..$ gender     : chr "Male"
+##   ..$ culture    : chr "Ironborn"
+##   ..$ born       : chr "In or between 269 AC and 273 AC, at Pyke"
+##   ..$ died       : chr ""
+##   ..$ alive      : logi TRUE
+##   ..$ titles     : chr [1:2] "Priest of the Drowned God" "Captain of the Golden Storm (formerly)"
+##   ..$ aliases    : chr [1:2] "The Damphair" "Aeron Damphair"
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr ""
+##   ..$ allegiances: chr "House Greyjoy of Pyke"
+##   ..$ books      : chr [1:4] "A Game of Thrones" "A Clash of Kings" "A Storm of Swords" "A Dance with Dragons"
+##   ..$ povBooks   : chr "A Feast for Crows"
+##   ..$ tvSeries   : chr "Season 6"
+##   ..$ playedBy   : chr "Michael Feast"
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/605"
+##   ..$ id         : int 605
+##   ..$ name       : chr "Kevan Lannister"
+##   ..$ gender     : chr "Male"
+##   ..$ culture    : chr ""
+##   ..$ born       : chr "In 244 AC"
+##   ..$ died       : chr "In 300 AC, at King's Landing"
+##   ..$ alive      : logi FALSE
+##   ..$ titles     : chr [1:4] "Ser" "Master of laws" "Lord Regent" "Protector of the Realm"
+##   ..$ aliases    : chr ""
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr "https://www.anapioficeandfire.com/api/characters/327"
+##   ..$ allegiances: chr "House Lannister of Casterly Rock"
+##   ..$ books      : chr [1:4] "A Game of Thrones" "A Clash of Kings" "A Storm of Swords" "A Feast for Crows"
+##   ..$ povBooks   : chr "A Dance with Dragons"
+##   ..$ tvSeries   : chr [1:4] "Season 1" "Season 2" "Season 5" "Season 6"
+##   ..$ playedBy   : chr "Ian Gelder"
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/743"
+##   ..$ id         : int 743
+##   ..$ name       : chr "Melisandre"
+##   ..$ gender     : chr "Female"
+##   ..$ culture    : chr "Asshai"
+##   ..$ born       : chr "At Unknown"
+##   ..$ died       : chr ""
+##   ..$ alive      : logi TRUE
+##   ..$ titles     : chr ""
+##   ..$ aliases    : chr [1:5] "The Red Priestess" "The Red Woman" "The King's Red Shadow" "Lady Red" ...
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr ""
+##   ..$ allegiances: list()
+##   ..$ books      : chr [1:3] "A Clash of Kings" "A Storm of Swords" "A Feast for Crows"
+##   ..$ povBooks   : chr "A Dance with Dragons"
+##   ..$ tvSeries   : chr [1:5] "Season 2" "Season 3" "Season 4" "Season 5" ...
+##   ..$ playedBy   : chr "Carice van Houten"
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/751"
+##   ..$ id         : int 751
+##   ..$ name       : chr "Merrett Frey"
+##   ..$ gender     : chr "Male"
+##   ..$ culture    : chr "Rivermen"
+##   ..$ born       : chr "In 262 AC"
+##   ..$ died       : chr "In 300 AC, at Near Oldstones"
+##   ..$ alive      : logi FALSE
+##   ..$ titles     : chr ""
+##   ..$ aliases    : chr "Merrett Muttonhead"
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr "https://www.anapioficeandfire.com/api/characters/712"
+##   ..$ allegiances: chr "House Frey of the Crossing"
+##   ..$ books      : chr [1:4] "A Game of Thrones" "A Clash of Kings" "A Feast for Crows" "A Dance with Dragons"
+##   ..$ povBooks   : chr "A Storm of Swords"
+##   ..$ tvSeries   : chr ""
+##   ..$ playedBy   : chr ""
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/844"
+##   ..$ id         : int 844
+##   ..$ name       : chr "Quentyn Martell"
+##   ..$ gender     : chr "Male"
+##   ..$ culture    : chr "Dornish"
+##   ..$ born       : chr "In 281 AC, at Sunspear, Dorne"
+##   ..$ died       : chr "In 300 AC, at Meereen"
+##   ..$ alive      : logi FALSE
+##   ..$ titles     : chr "Prince"
+##   ..$ aliases    : chr [1:4] "Frog" "Prince Frog" "The prince who came too late" "The Dragonrider"
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr ""
+##   ..$ allegiances: chr "House Nymeros Martell of Sunspear"
+##   ..$ books      : chr [1:4] "A Game of Thrones" "A Clash of Kings" "A Storm of Swords" "A Feast for Crows"
+##   ..$ povBooks   : chr "A Dance with Dragons"
+##   ..$ tvSeries   : chr ""
+##   ..$ playedBy   : chr ""
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/954"
+##   ..$ id         : int 954
+##   ..$ name       : chr "Samwell Tarly"
+##   ..$ gender     : chr "Male"
+##   ..$ culture    : chr "Andal"
+##   ..$ born       : chr "In 283 AC, at Horn Hill"
+##   ..$ died       : chr ""
+##   ..$ alive      : logi TRUE
+##   ..$ titles     : chr ""
+##   ..$ aliases    : chr [1:7] "Sam" "Ser Piggy" "Prince Pork-chop" "Lady Piggy" ...
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr ""
+##   ..$ allegiances: chr "House Tarly of Horn Hill"
+##   ..$ books      : chr [1:3] "A Game of Thrones" "A Clash of Kings" "A Dance with Dragons"
+##   ..$ povBooks   : chr [1:2] "A Storm of Swords" "A Feast for Crows"
+##   ..$ tvSeries   : chr [1:6] "Season 1" "Season 2" "Season 3" "Season 4" ...
+##   ..$ playedBy   : chr "John Bradley-West"
+##  $ :List of 18
+##   ..$ url        : chr "https://www.anapioficeandfire.com/api/characters/957"
+##   ..$ id         : int 957
+##   ..$ name       : chr "Sansa Stark"
+##   ..$ gender     : chr "Female"
+##   ..$ culture    : chr "Northmen"
+##   ..$ born       : chr "In 286 AC, at Winterfell"
+##   ..$ died       : chr ""
+##   ..$ alive      : logi TRUE
+##   ..$ titles     : chr "Princess"
+##   ..$ aliases    : chr [1:3] "Little bird" "Alayne Stone" "Jonquil"
+##   ..$ father     : chr ""
+##   ..$ mother     : chr ""
+##   ..$ spouse     : chr "https://www.anapioficeandfire.com/api/characters/1052"
+##   ..$ allegiances: chr [1:2] "House Baelish of Harrenhal" "House Stark of Winterfell"
+##   ..$ books      : chr "A Dance with Dragons"
+##   ..$ povBooks   : chr [1:4] "A Game of Thrones" "A Clash of Kings" "A Storm of Swords" "A Feast for Crows"
+##   ..$ tvSeries   : chr [1:6] "Season 1" "Season 2" "Season 3" "Season 4" ...
+##   ..$ playedBy   : chr "Sophie Turner"
 ```
 
 ---
 
-## Working with lists
+## Examining Lists
 
-* single bracket operator [ ] returns sub-list
+RStudio has a built-in list viewer
+![Screenshot of list viewer](list_viewer.png)
+
+---
+
+## Extracting Elements from Lists
 
 
 ```r
-mod[c(1,6,8)]
+theon &lt;- got_chars[[1]] # Gets 1st list element
+str(theon) 
+## List of 18
+##  $ url        : chr "https://www.anapioficeandfire.com/api/characters/1022"
+##  $ id         : int 1022
+##  $ name       : chr "Theon Greyjoy"
+##  $ gender     : chr "Male"
+##  $ culture    : chr "Ironborn"
+##  $ born       : chr "In 278 AC or 279 AC, at Pyke"
+##  $ died       : chr ""
+##  $ alive      : logi TRUE
+##  $ titles     : chr [1:3] "Prince of Winterfell" "Captain of Sea Bitch" "Lord of the Iron Islands (by law of the green lands)"
+##  $ aliases    : chr [1:4] "Prince of Fools" "Theon Turncloak" "Reek" "Theon Kinslayer"
+##  $ father     : chr ""
+##  $ mother     : chr ""
+##  $ spouse     : chr ""
+##  $ allegiances: chr "House Greyjoy of Pyke"
+##  $ books      : chr [1:3] "A Game of Thrones" "A Storm of Swords" "A Feast for Crows"
+##  $ povBooks   : chr [1:2] "A Clash of Kings" "A Dance with Dragons"
+##  $ tvSeries   : chr [1:6] "Season 1" "Season 2" "Season 3" "Season 4" ...
+##  $ playedBy   : chr "Alfie Allen"
 ```
 
+---
+
+## Extracting Elements from Lists
+
+
+```r
+# Extracting elements by name:
+theon[["tvSeries"]]
+## [1] "Season 1" "Season 2" "Season 3" "Season 4" "Season 5"
+## [6] "Season 6"
+theon["culture"]
+## $culture
+## [1] "Ironborn"
+theon$alive
+## [1] TRUE
 ```
-## $coefficients
-## (Intercept)         cyl        disp          hp        drat          wt 
-## 36.00835689 -1.10748650  0.01235733 -0.02401743  0.95220742 -3.67328708 
+
+
+```r
+# Extracting elements by position: 
+theon[[3]]
+## [1] "Theon Greyjoy"
+theon[3:5]
+## $name
+## [1] "Theon Greyjoy"
 ## 
-## $rank
-## [1] 6
+## $gender
+## [1] "Male"
 ## 
-## $family
+## $culture
+## [1] "Ironborn"
+```
+
+---
+
+## Indexing
+
+So [what's the difference](https://cran.r-project.org/doc/manuals/R-lang.html#Indexing) between `x$.`, `x[[.]]` and `x[.]`?
+
+`x[[.]]`
+- Returns a single element
+- Selection by numerical or character index
+
+`x[.]`
+- Returns a list
+- Allows indexing by vectors
+
+`x$.`
+- Returns a list component
+- Indexing by component name (doesn't work on unnamed lists)
+
+---
+
+## Extracting Elements from Lists
+The `magrittr` package contains a collection of pipe-friendly replacements for base R functions.
+
+
+```r
+library(magrittr)
+got_chars %&gt;%
+  extract2(1) %&gt;% # extract2 is the pipe version of [[.]]
+  extract(3) # extract is the pipe version of [.]
+```
+
+```
+## $name
+## [1] "Theon Greyjoy"
+```
+
+```r
+# unlist() creates a vector from a list by concatenating 
+# and type-converting the list elements
+got_chars %&gt;% extract2(1) %&gt;% extract(c(3, 10)) %&gt;% unlist()
+```
+
+```
+##              name          aliases1          aliases2 
+##   "Theon Greyjoy" "Prince of Fools" "Theon Turncloak" 
+##          aliases3          aliases4 
+##            "Reek" "Theon Kinslayer"
+```
+
+---
+class: inverse
+## Your Turn
+
+Explore the `got_chars` object from the `repurrrsive` package. 
+
+
+```r
+## devtools::install_github("jennybc/repurrrsive")
+library(repurrrsive)
+data("got_chars")
+```
+
+1. Can it be converted to a data frame? Why or why not?
+
+2. Use base R operators (`[[`, `[`, and `$`) to determine who the 8th character in the list is, and what their allegiance is.
+
+3. Use `magrittr` operators (`extract2` and `extract`) to determine who the 5th character in the list is, and whether they are currently alive.
+
+---
+
+## Working with Lists
+
+The `purrr` [package](http://purrr.tidyverse.org/) contains tools for working with lists more easily. It is part of the tidyverse. 
+
+Purrr functions operate by applying a function to every element (or chunk) of a list or data frame. 
+`map` is the basic function and returns the function's results as a list (by default). 
+
+
+```r
+library(purrr)
+
+# Get the length of each list in got_chars
+map(got_chars, length) 
+```
+
+```
+## [[1]]
+## [1] 18
 ## 
-## Family: gaussian 
-## Link function: identity
-```
-
-
----
-
-## Working with lists (cont'd)
-
-* double bracket operator `[[ ]]` returns single list element (i.e. only single positive integer is allowed as index)
-* similarly, named objects can be accessed using the `$` operator
-
-
-```r
-mod[[1]]
-```
-
-```
-## (Intercept)         cyl        disp          hp        drat          wt 
-## 36.00835689 -1.10748650  0.01235733 -0.02401743  0.95220742 -3.67328708
-```
-
-```r
-mod$rank
-```
-
-```
-## [1] 6
-```
-
----
-
-## Objects in R
-
-* S3, S4 objects or reference class objects are used for more advanced and customized objects
-* S3 objects are organized like a hybrid between regular data frames and lists
-* the @ takes the role of $ in data frames
-
-
-```r
-library(maptools)
-library(rgdal)
-xx &lt;- readOGR("../data/australia/region.shp")
-```
-
-```
-## OGR data source with driver: ESRI Shapefile 
-## Source: "/home/susan/Class/Stat585/materials-2019/data/australia/region.shp", layer: "region"
-## with 150 features
-## It has 9 fields
-## Integer64 fields read as strings:  NUMCCDS ACTUAL PROJECTED POPULATION OVER_18
-```
-
-```r
-class(xx)
-```
-
-```
-## [1] "SpatialPolygonsDataFrame"
-## attr(,"package")
-## [1] "sp"
-```
-
-```r
-slotNames(xx)
-```
-
-```
-## [1] "data"        "polygons"    "plotOrder"   "bbox"        "proj4string"
-```
-
-```r
-xx@bbox
-```
-
-```
-##         min        max
-## x  96.81677 159.109219
-## y -43.74051  -9.142176
-```
-
----
-
-##
-
-* special functions can be implemented to deal with S3 objects. These are called __methods__
-
-
-```r
-methods(class=class(xx))
-```
-
-```
-## Loading required package: sp
-```
-
-```
-##  [1] [             [[            [[&lt;-          [&lt;-           $            
-##  [6] $&lt;-           addAttrToGeom bbox          coerce        coerce&lt;-     
-## [11] coordinates   coordinates&lt;- coordnames    coordnames&lt;-  dimensions   
-## [16] disaggregate  fortify       fullgrid      geometry      geometry&lt;-   
-## [21] gridded       is.projected  merge         over          plot         
-## [26] polygons      polygons&lt;-    proj4string   proj4string&lt;- recenter     
-## [31] spChFIDs      spChFIDs&lt;-    split         sppanel       spplot       
-## [36] spsample      spTransform   summary      
-## see '?methods' for accessing help and source code
+## [[2]]
+## [1] 18
+## 
+## [[3]]
+## [1] 18
+## 
+## [[4]]
+## [1] 18
+## 
+## [[5]]
+## [1] 18
+## 
+## [[6]]
+## [1] 18
+## 
+## [[7]]
+## [1] 18
+## 
+## [[8]]
+## [1] 18
+## 
+## [[9]]
+## [1] 18
+## 
+## [[10]]
+## [1] 18
+## 
+## [[11]]
+## [1] 18
+## 
+## [[12]]
+## [1] 18
+## 
+## [[13]]
+## [1] 18
+## 
+## [[14]]
+## [1] 18
+## 
+## [[15]]
+## [1] 18
+## 
+## [[16]]
+## [1] 18
+## 
+## [[17]]
+## [1] 18
+## 
+## [[18]]
+## [1] 18
+## 
+## [[19]]
+## [1] 18
+## 
+## [[20]]
+## [1] 18
+## 
+## [[21]]
+## [1] 18
+## 
+## [[22]]
+## [1] 18
+## 
+## [[23]]
+## [1] 18
+## 
+## [[24]]
+## [1] 18
+## 
+## [[25]]
+## [1] 18
+## 
+## [[26]]
+## [1] 18
+## 
+## [[27]]
+## [1] 18
+## 
+## [[28]]
+## [1] 18
+## 
+## [[29]]
+## [1] 18
+## 
+## [[30]]
+## [1] 18
 ```
 
 ---
 
-## Extract data for each spatial entity
+## Working with Lists
+
+Specify the type using `map_int`, `map_chr`, `map_df`, and others
 
 
 ```r
-as.data.frame(xx)
+map_int(got_chars, length)
 ```
 
 ```
-##           ELECT_DIV STATE NUMCCDS ACTUAL PROJECTED POPULATION OVER_18
-## 0          Lingiari    NT     335      0         0          0       0
-## 1           Solomon    NT     180      0         0          0       0
-## 2          Canberra   ACT     283      0         0          0       0
-## 3            Fraser   ACT     270      0         0          0       0
-## 4             Brand    WA     243      0         0          0       0
-## 5           Canning    WA     268      0         0          0       0
-## 6             Cowan    WA     198      0         0          0       0
-## 7            Curtin    WA     334      0         0          0       0
-## 8            Durack    WA     487      0         0          0       0
-## 9           Forrest    WA     271      0         0          0       0
-## 10        Fremantle    WA     273      0         0          0       0
-## 11          Hasluck    WA     264      0         0          0       0
-## 12            Moore    WA     223      0         0          0       0
-## 13         O'Connor    WA     433      0         0          0       0
-## 14           Pearce    WA     266      0         0          0       0
-## 15            Perth    WA     292      0         0          0       0
-## 16         Stirling    WA     273      0         0          0       0
-## 17             Swan    WA     325      0         0          0       0
-## 18          Tangney    WA     235      0         0          0       0
-## 19             Bass   TAS     208      0         0          0       0
-## 20          Braddon   TAS     226      0         0          0       0
-## 21          Denison   TAS     197      0         0          0       0
-## 22         Franklin   TAS     179      0         0          0       0
-## 23            Lyons   TAS     256      0         0          0       0
-## 24            Banks   NSW     229      0         0          0       0
-## 25           Barton   NSW     234      0         0          0       0
-## 26        Bennelong   NSW     238      0         0          0       0
-## 27          Berowra   NSW     193      0         0          0       0
-## 28         Blaxland   NSW     212      0         0          0       0
-## 29        Bradfield   NSW     210      0         0          0       0
-## 30           Calare   NSW     316      0         0          0       0
-## 31         Charlton   NSW     211      0         0          0       0
-## 32          Chifley   NSW     216      0         0          0       0
-## 33             Cook   NSW     241      0         0          0       0
-## 34           Cowper   NSW     256      0         0          0       0
-## 35       Cunningham   NSW     252      0         0          0       0
-## 36           Dobell   NSW     236      0         0          0       0
-## 37      Eden-Monaro   NSW     308      0         0          0       0
-## 38           Farrer   NSW     349      0         0          0       0
-## 39           Fowler   NSW     191      0         0          0       0
-## 40          Gilmore   NSW     262      0         0          0       0
-## 41        Grayndler   NSW     289      0         0          0       0
-## 42         Greenway   NSW     194      0         0          0       0
-## 43           Hughes   NSW     197      0         0          0       0
-## 44             Hume   NSW     313      0         0          0       0
-## 45           Hunter   NSW     252      0         0          0       0
-## 46  Kingsford Smith   NSW     274      0         0          0       0
-## 47          Lindsay   NSW     213      0         0          0       0
-## 48             Lyne   NSW     240      0         0          0       0
-## 49        Macarthur   NSW     182      0         0          0       0
-## 50        Mackellar   NSW     234      0         0          0       0
-## 51        Macquarie   NSW     248      0         0          0       0
-## 52          McMahon   NSW     192      0         0          0       0
-## 53         Mitchell   NSW     166      0         0          0       0
-## 54      New England   NSW     367      0         0          0       0
-## 55        Newcastle   NSW     264      0         0          0       0
-## 56     North Sydney   NSW     273      0         0          0       0
-## 57             Page   NSW     281      0         0          0       0
-## 58           Parkes   NSW     462      0         0          0       0
-## 59       Parramatta   NSW     237      0         0          0       0
-## 60         Paterson   NSW     243      0         0          0       0
-## 61             Reid   NSW     241      0         0          0       0
-## 62         Richmond   NSW     245      0         0          0       0
-## 63         Riverina   NSW     334      0         0          0       0
-## 64        Robertson   NSW     257      0         0          0       0
-## 65        Shortland   NSW     219      0         0          0       0
-## 66           Sydney   NSW     310      0         0          0       0
-## 67          Throsby   NSW     224      0         0          0       0
-## 68        Warringah   NSW     292      0         0          0       0
-## 69           Watson   NSW     246      0         0          0       0
-## 70        Wentworth   NSW     356      0         0          0       0
-## 71          Werriwa   NSW     188      0         0          0       0
-## 72            Blair   QLD     233      0         0          0       0
-## 73           Bonner   QLD     216      0         0          0       0
-## 74           Bowman   QLD     199      0         0          0       0
-## 75         Brisbane   QLD     305      0         0          0       0
-## 76      Capricornia   QLD     302      0         0          0       0
-## 77           Dawson   QLD     291      0         0          0       0
-## 78          Dickson   QLD     192      0         0          0       0
-## 79           Fadden   QLD     214      0         0          0       0
-## 80          Fairfax   QLD     232      0         0          0       0
-## 81           Fisher   QLD     220      0         0          0       0
-## 82            Flynn   QLD     342      0         0          0       0
-## 83            Forde   QLD     184      0         0          0       0
-## 84         Griffith   QLD     279      0         0          0       0
-## 85            Groom   QLD     251      0         0          0       0
-## 86          Herbert   QLD     242      0         0          0       0
-## 87          Hinkler   QLD     239      0         0          0       0
-## 88          Kennedy   QLD     410      0         0          0       0
-## 89       Leichhardt   QLD     332      0         0          0       0
-## 90           Lilley   QLD     254      0         0          0       0
-## 91          Longman   QLD     192      0         0          0       0
-## 92          Maranoa   QLD     428      0         0          0       0
-## 93        Mcpherson   QLD     237      0         0          0       0
-## 94        Moncrieff   QLD     291      0         0          0       0
-## 95          Moreton   QLD     237      0         0          0       0
-## 96            Oxley   QLD     193      0         0          0       0
-## 97           Petrie   QLD     198      0         0          0       0
-## 98           Rankin   QLD     225      0         0          0       0
-## 99             Ryan   QLD     244      0         0          0       0
-## 100        Wide Bay   QLD     310      0         0          0       0
-## 101          Wright   QLD     250      0         0          0       0
-## 102           Aston   VIC     191      0         0          0       0
-## 103        Ballarat   VIC     274      0         0          0       0
-## 104          Batman   VIC     265      0         0          0       0
-## 105         Bendigo   VIC     284      0         0          0       0
-## 106           Bruce   VIC     226      0         0          0       0
-## 107         Calwell   VIC     214      0         0          0       0
-## 108           Casey   VIC     236      0         0          0       0
-## 109        Chisholm   VIC     245      0         0          0       0
-## 110     Corangamite   VIC     264      0         0          0       0
-## 111           Corio   VIC     250      0         0          0       0
-## 112          Deakin   VIC     240      0         0          0       0
-## 113         Dunkley   VIC     241      0         0          0       0
-## 114        Flinders   VIC     328      0         0          0       0
-## 115      Gellibrand   VIC     270      0         0          0       0
-## 116       Gippsland   VIC     286      0         0          0       0
-## 117       Goldstein   VIC     232      0         0          0       0
-## 118          Gorton   VIC     186      0         0          0       0
-## 119         Higgins   VIC     279      0         0          0       0
-## 120            Holt   VIC     209      0         0          0       0
-## 121          Hotham   VIC     221      0         0          0       0
-## 122            Indi   VIC     328      0         0          0       0
-## 123          Isaacs   VIC     224      0         0          0       0
-## 124        Jagajaga   VIC     238      0         0          0       0
-## 125         Kooyong   VIC     253      0         0          0       0
-## 126        La Trobe   VIC     228      0         0          0       0
-## 127           Lalor   VIC     206      0         0          0       0
-## 128          Mallee   VIC     355      0         0          0       0
-## 129     Maribyrnong   VIC     248      0         0          0       0
-## 130          McEwen   VIC     207      0         0          0       0
-## 131        Mcmillan   VIC     278      0         0          0       0
-## 132       Melbourne   VIC     344      0         0          0       0
-## 133 Melbourne Ports   VIC     316      0         0          0       0
-## 134         Menzies   VIC     200      0         0          0       0
-## 135          Murray   VIC     298      0         0          0       0
-## 136         Scullin   VIC     202      0         0          0       0
-## 137          Wannon   VIC     320      0         0          0       0
-## 138           Wills   VIC     276      0         0          0       0
-## 139        Adelaide    SA     318      0         0          0       0
-## 140          Barker    SA     343      0         0          0       0
-## 141         Boothby    SA     281      0         0          0       0
-## 142            Grey    SA     429      0         0          0       0
-## 143       Hindmarsh    SA     322      0         0          0       0
-## 144        Kingston    SA     229      0         0          0       0
-## 145           Makin    SA     232      0         0          0       0
-## 146            Mayo    SA     276      0         0          0       0
-## 147   Port Adelaide    SA     299      0         0          0       0
-## 148           Sturt    SA     255      0         0          0       0
-## 149       Wakefield    SA     277      0         0          0       0
-##        AREA_SQKM        SORTNAME
-## 0   1352034.0500        Lingiari
-## 1       336.6860         Solomon
-## 2      1920.4800        Canberra
-## 3       505.2460          Fraser
-## 4       410.5300           Brand
-## 5      6178.0400         Canning
-## 6       179.6210           Cowan
-## 7       104.1460          Curtin
-## 8   1587757.9500          Durack
-## 9     12781.4000         Forrest
-## 10      201.3630       Fremantle
-## 11      244.5320         Hasluck
-## 12      133.2290           Moore
-## 13   908954.1100        O'Connor
-## 14    14401.4000          Pearce
-## 15       78.4488           Perth
-## 16       77.3032        Stirling
-## 17      126.3050            Swan
-## 18       96.2293         Tangney
-## 19     7378.7500            Bass
-## 20    20826.1800         Braddon
-## 21      288.7180         Denison
-## 22     6514.2100        Franklin
-## 23    32910.6200           Lyons
-## 24       49.3189           Banks
-## 25       44.1112          Barton
-## 26       58.3775       Bennelong
-## 27      782.3660         Berowra
-## 28       62.1464        Blaxland
-## 29       99.0623       Bradfield
-## 30    30526.2700          Calare
-## 31      688.1180        Charlton
-## 32      135.0250         Chifley
-## 33      100.0730            Cook
-## 34     7860.6500          Cowper
-## 35      721.1000      Cunningham
-## 36      774.7040          Dobell
-## 37    29499.3200     Eden-Monaro
-## 38   247096.5100          Farrer
-## 39       69.3533          Fowler
-## 40     4877.7800         Gilmore
-## 41       32.3086       Grayndler
-## 42       84.0739        Greenway
-## 43      178.2960          Hughes
-## 44    33636.8400            Hume
-## 45    20110.6300          Hunter
-## 46      126.9670 Kingsford Smith
-## 47      339.0580         Lindsay
-## 48    11991.2000            Lyne
-## 49      798.0870       Macarthur
-## 50      233.3590       Mackellar
-## 51     4374.0000       Macquarie
-## 52      160.5560         McMahon
-## 53      101.1940        Mitchell
-## 54    59344.2600     New England
-## 55      354.4350       Newcastle
-## 56       47.7005    North Sydney
-## 57    16142.9400            Page
-## 58   256643.1700          Parkes
-## 59       55.8604      Parramatta
-## 60     6652.0100        Paterson
-## 61       65.8119            Reid
-## 62     2768.2600        Richmond
-## 63    61435.4800        Riverina
-## 64      978.2190       Robertson
-## 65      205.0200       Shortland
-## 66       91.2251          Sydney
-## 67     1422.3800         Throsby
-## 68       72.6744       Warringah
-## 69       42.1760          Watson
-## 70       29.6311       Wentworth
-## 71      158.5020         Werriwa
-## 72     6409.2700           BLAIR
-## 73      360.0610          BONNER
-## 74      537.1130          BOWMAN
-## 75       58.2288        BRISBANE
-## 76    91048.9300     CAPRICORNIA
-## 77    14945.3600          DAWSON
-## 78      722.4760         DICKSON
-## 79      395.4430          FADDEN
-## 80     1035.9500         FAIRFAX
-## 81     1169.8800          FISHER
-## 82   133063.4300           FLYNN
-## 83      418.5660           FORDE
-## 84       59.7682        GRIFFITH
-## 85     5594.4000           GROOM
-## 86      945.7040         HERBERT
-## 87     3503.9200         HINKLER
-## 88   568992.5200         KENNEDY
-## 89   148988.0800      LEICHHARDT
-## 90      147.2850          LILLEY
-## 91     1239.3000         LONGMAN
-## 92   731297.2700         MARANOA
-## 93      229.7320       MCPHERSON
-## 94       92.3257       MONCRIEFF
-## 95      110.8710         MORETON
-## 96      155.3490           OXLEY
-## 97      152.0190          PETRIE
-## 98      131.1500          RANKIN
-## 99      440.9560            RYAN
-## 100   14572.6200        WIDE BAY
-## 101    7589.1000          Wright
-## 102      99.0122           Aston
-## 103    4651.5400        Ballarat
-## 104      65.6887          Batman
-## 105    6255.0000         Bendigo
-## 106      72.6115           Bruce
-## 107     174.7130         Calwell
-## 108    2337.3400           Casey
-## 109      64.9781        Chisholm
-## 110    7623.9500     Corangamite
-## 111     989.4480           Corio
-## 112      69.8003          Deakin
-## 113     139.9960         Dunkley
-## 114    1952.0900        Flinders
-## 115     101.6390      Gellibrand
-## 116   33053.5300       Gippsland
-## 117      50.4044       Goldstein
-## 118     561.5420          Gorton
-## 119      39.8680         Higgins
-## 120     131.2150            Holt
-## 121      75.0985          Hotham
-## 122   28567.0100            Indi
-## 123     165.8920          Isaacs
-## 124     127.9160        Jagajaga
-## 125      52.3950         Kooyong
-## 126     561.9950        La Trobe
-## 127     545.6380           Lalor
-## 128   73878.6800          Mallee
-## 129      72.5144     Maribyrnong
-## 130    4592.0800          McEwen
-## 131    8357.8600        Mcmillan
-## 132      46.3801       Melbourne
-## 133      40.1226 Melbourne Ports
-## 134     124.7230         Menzies
-## 135   19500.2700          Murray
-## 136     169.0810         Scullin
-## 137   32046.7700          Wannon
-## 138      56.8234           Wills
-## 139      76.0074        Adelaide
-## 140   63885.7100          Barker
-## 141     129.6820         Boothby
-## 142  904881.2300            Grey
-## 143      77.5908       Hindmarsh
-## 144     170.5720        Kingston
-## 145     130.0800           Makin
-## 146    9314.6500            Mayo
-## 147     180.6450   Port Adelaide
-## 148      85.3432           Sturt
-## 149    6407.1200       Wakefield
+##  [1] 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18
+## [19] 18 18 18 18 18 18 18 18 18 18 18 18
+```
+
+```r
+# Map names() to a data frame column
+map_dfc(got_chars, names)
+```
+
+```
+## # A tibble: 18 x 30
+##    V1     V2     V3     V4    V5    V6    V7    V8    V9   
+##    &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+##  1 url    url    url    url   url   url   url   url   url  
+##  2 id     id     id     id    id    id    id    id    id   
+##  3 name   name   name   name  name  name  name  name  name 
+##  4 gender gender gender gend… gend… gend… gend… gend… gend…
+##  5 cultu… cultu… cultu… cult… cult… cult… cult… cult… cult…
+##  6 born   born   born   born  born  born  born  born  born 
+##  7 died   died   died   died  died  died  died  died  died 
+##  8 alive  alive  alive  alive alive alive alive alive alive
+##  9 titles titles titles titl… titl… titl… titl… titl… titl…
+## 10 alias… alias… alias… alia… alia… alia… alia… alia… alia…
+## 11 father father father fath… fath… fath… fath… fath… fath…
+## 12 mother mother mother moth… moth… moth… moth… moth… moth…
+## 13 spouse spouse spouse spou… spou… spou… spou… spou… spou…
+## 14 alleg… alleg… alleg… alle… alle… alle… alle… alle… alle…
+## 15 books  books  books  books books books books books books
+## 16 povBo… povBo… povBo… povB… povB… povB… povB… povB… povB…
+## 17 tvSer… tvSer… tvSer… tvSe… tvSe… tvSe… tvSe… tvSe… tvSe…
+## 18 playe… playe… playe… play… play… play… play… play… play…
+## # ... with 21 more variables: V10 &lt;chr&gt;, V11 &lt;chr&gt;,
+## #   V12 &lt;chr&gt;, V13 &lt;chr&gt;, V14 &lt;chr&gt;, V15 &lt;chr&gt;, V16 &lt;chr&gt;,
+## #   V17 &lt;chr&gt;, V18 &lt;chr&gt;, V19 &lt;chr&gt;, V20 &lt;chr&gt;, V21 &lt;chr&gt;,
+## #   V22 &lt;chr&gt;, V23 &lt;chr&gt;, V24 &lt;chr&gt;, V25 &lt;chr&gt;, V26 &lt;chr&gt;,
+## #   V27 &lt;chr&gt;, V28 &lt;chr&gt;, V29 &lt;chr&gt;, V30 &lt;chr&gt;
 ```
 
 ---
 
-## Extract data for each spatial outline
+## Working with Lists
+
+Purrr comes with a few shortcuts, too:
 
 
 ```r
-map &lt;- fortify(xx)
+# For each element in got_chars, get the "name" element
+map_chr(got_chars, "name")
 ```
 
 ```
-## Regions defined for each Polygons
-```
-
-```r
-head(map)
-```
-
-```
-##       long       lat order  hole piece id group
-## 1 138.0012 -18.62066     1 FALSE     1  0   0.1
-## 2 138.0012 -18.64651     2 FALSE     1  0   0.1
-## 3 137.9966 -18.86822     3 FALSE     1  0   0.1
-## 4 137.9960 -18.99851     4 FALSE     1  0   0.1
-## 5 137.9960 -19.01883     5 FALSE     1  0   0.1
-## 6 137.9960 -19.10216     6 FALSE     1  0   0.1
+##  [1] "Theon Greyjoy"      "Tyrion Lannister"  
+##  [3] "Victarion Greyjoy"  "Will"              
+##  [5] "Areo Hotah"         "Chett"             
+##  [7] "Cressen"            "Arianne Martell"   
+##  [9] "Daenerys Targaryen" "Davos Seaworth"    
+## [11] "Arya Stark"         "Arys Oakheart"     
+## [13] "Asha Greyjoy"       "Barristan Selmy"   
+## [15] "Varamyr"            "Brandon Stark"     
+## [17] "Brienne of Tarth"   "Catelyn Stark"     
+## [19] "Cersei Lannister"   "Eddard Stark"      
+## [21] "Jaime Lannister"    "Jon Connington"    
+## [23] "Jon Snow"           "Aeron Greyjoy"     
+## [25] "Kevan Lannister"    "Melisandre"        
+## [27] "Merrett Frey"       "Quentyn Martell"   
+## [29] "Samwell Tarly"      "Sansa Stark"
 ```
 
 ---
 
-## Plot the map
+## Working with Lists
+
+Purrr comes with a few shortcuts, too:
 
 
 ```r
-map %&gt;% 
-  ggplot(aes(x = long, y = lat, group = group)) + 
-  geom_path() + coord_map()
-```
-
-![](01_data-structures_files/figure-html/unnamed-chunk-15-1.png)&lt;!-- --&gt;
-
----
-
-## Your Turn (10 min)
-
-&lt;img src="images/earth.jpg" width="1200" class="cover"&gt;
-
-- &lt;span style="color:white"&gt;Download the shapefile for a country of your choice from [GADM - Boundaries without limits](http://www.gadm.org/country). (Make sure to select the shapefiles version of the boundary set) &lt;/span&gt;
-- &lt;span style="color:white"&gt;Unzip the document and move the resulting folder into your working directory (or somewhere close to it).&lt;/span&gt;
-- &lt;span style="color:white"&gt;Read the shapefile (there are usually shapefiles at different administrative levels - pick one), export the polygons and plot in `ggplot2`.&lt;/span&gt;
-
-
----
-
-## Your Turn - Solution
-
-
-```r
-shape &lt;- maptools::readShapeSpatial("../data/DEU_adm_shp/DEU_adm1.shp")
+# For each element in got_chars, get the 1st element
+map_chr(got_chars[1:5], 1)
 ```
 
 ```
-## Warning: readShapeSpatial is deprecated; use rgdal::readOGR or sf::st_read
-```
-
-```
-## Warning: readShapePoly is deprecated; use rgdal::readOGR or sf::st_read
-```
-
-```r
-head(as.data.frame(shape))
-```
-
-```
-##   ID_0 ISO  NAME_0 ID_1            NAME_1 HASC_1 CCN_1 CCA_1
-## 0   86 DEU Germany    1 Baden-Württemberg  DE.BW     0    08
-## 1   86 DEU Germany    2            Bayern  DE.BY     0    09
-## 2   86 DEU Germany    3            Berlin  DE.BE     0    11
-## 3   86 DEU Germany    4       Brandenburg  DE.BR     0    12
-## 4   86 DEU Germany    5            Bremen  DE.HB     0    04
-## 5   86 DEU Germany    6           Hamburg  DE.HH     0    02
-##                 TYPE_1 ENGTYPE_1 NL_NAME_1 VARNAME_1
-## 0                 Land     State      &lt;NA&gt;      &lt;NA&gt;
-## 1            Freistaat      &lt;NA&gt;      &lt;NA&gt;   Bavaria
-## 2                 Land     State      &lt;NA&gt;      &lt;NA&gt;
-## 3                 Land     State      &lt;NA&gt;      &lt;NA&gt;
-## 4     Freie Hansestadt     State      &lt;NA&gt;    &lt;Null&gt;
-## 5 Freie und Hansestadt     State      &lt;NA&gt;      &lt;NA&gt;
-```
-
-```r
-de1 &lt;- fortify(shape)
-```
-
-```
-## Regions defined for each Polygons
+## [1] "https://www.anapioficeandfire.com/api/characters/1022"
+## [2] "https://www.anapioficeandfire.com/api/characters/1052"
+## [3] "https://www.anapioficeandfire.com/api/characters/1074"
+## [4] "https://www.anapioficeandfire.com/api/characters/1109"
+## [5] "https://www.anapioficeandfire.com/api/characters/1166"
 ```
 
 ---
-
-## Your Turn - plot the map
-
-
+class:inverse
+## Your Turn
 
 
 ```r
-de1 %&gt;% 
-  ggplot(aes(x = long, y = lat)) + geom_path(aes(group = group)) + 
-  coord_equal() + ggthemes::theme_map() + geom_point(data=df) + 
-  ggrepel::geom_label_repel(aes(label = label), data = df)
+library(dplyr)
+library(purrr)
 ```
 
-![](01_data-structures_files/figure-html/unnamed-chunk-18-1.png)&lt;!-- --&gt;
+1. What are the types of each character attribute? (It's ok to look at just the 1st character)
+
+
+2. Which attributes have multiple entries per character? Do any attributes have no entries for all characters?
+
+
+
+3. Assemble a data frame of Game of Thrones characters column-by-column using appropriate `map_*` functions. Which columns cannot be easily included? 
+
+4. How many of the characters are still alive?
     </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
