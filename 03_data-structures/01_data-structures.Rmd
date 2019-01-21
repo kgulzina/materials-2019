@@ -31,81 +31,48 @@ integer | 2
 character | "hello world"
 logical | TRUE
 
-Convert between data types with `as.XXX`, e.g. `as.numeric("2.394")` or `as.character("3.14159")`
+Convert between data types with **cast operators** 
+```
+as.character, as.numeric, as.logical, as.integer, ...
+```
+e.g. `as.numeric("2.394")` or `as.character("3.14159")`
 
 Test whether something has a data type with `is.XXX`, e.g. `is.character("fuzzy puppies")` or `is.logical("abcde")`
 
 ---
 
-## Basic Data Structures
+## Numeric values
 
-Data structures hold one or more basic data types and may have multiple dimensions:
+Numeric objects have double precision, i.e. work with 53 bits 
+```{r, echo=TRUE}
+pi <- as.numeric(gsub(" ","","3.14159 26535 89793 23846 26433"))
+# maximum number of digist that can be shown is 22
+print(pi, digits=22)
+```
+first 15 digits are fine, anything beyond that is suspicious and most likely incorrect
 
-   | One type | Multiple Types
--- | -------- | --------------
-1D | Atomic vector | List
-2D | Matrix | Data frame
-nD | Array | 
 
-An individual value ("scalar" in other languages) is a length one vector in R
+Precision is machine dependent
 
 ---
 
-## Basic Data Structures
+## `.Machine$double.eps`
 
-`str()` can be used to examine a variable and determine its structure:
+`.Machine$double.eps` is the machine's difference between two consecutive real valued numbers
 
-```{r, include = F}
-library(tidyverse)
-```
-
-```{r, eval = -1}
-library(tidyverse)
-data("mtcars")
-str(mtcars)
-```
----
-
-## Basic Data Structures
-
-`str()` can be used to examine a variable and determine its structure:
 ```{r}
-data("eurodist")
-str(eurodist)
+.Machine$double.eps
+
+1 + .Machine$double.eps == 1
+1 + .Machine$double.eps/2 == 1
 ```
+
 ---
 
-## Basic Data Structures
-
-`str()` can be used to examine a variable and determine its structure:
 ```{r}
-data("discoveries")
-str(discoveries)
-```
----
-
-## Basic Data Structures
-
-`str()` can be used to examine a variable and determine its structure:
-```{r}
-data("occupationalStatus")
-str(occupationalStatus)
-```
----
-
-## Basic Data Structures
-
-`str()` can be used to examine a variable and determine its structure:
-```{r}
-str(c(5:15))
-str(month.name)
-str(3)
-str(mean)
+.Machine
 ```
 
----
-class: center, middle
-# Factors
 
 ---
 
@@ -180,39 +147,207 @@ as.numeric(as.character(fac_x))
 `as.character()` extracts the labels; you can then use `as.numeric` to get the labels' numeric value.
 
 ---
-class:center, middle
-# Lists
+
+## Type conversions
+
+implicit type conversions happen all the time:
+```{r}
+x <- c("4.5", 3, TRUE, "elephant")
+# The logical value becomes a character
+x
+```
+
+
+Note that the cast from logical to  character doesn't survive intact
+```{r}
+as.numeric(x) 
+```
 
 ---
 
+## Basic Data Structures
+
+Data structures hold one or more basic data types and may have multiple dimensions:
+
+   | One type | Multiple Types
+-- | -------- | --------------
+1D | (Atomic) Vector | List
+2D | Matrix | Data frame
+nD | Array | 
+
+An individual value ("scalar" in other languages) is a length one vector in R
+
+* **Vectors**: one-dimensional array of values of the same type; vectors have a length, but no dimension
+
+* **Matrix**: two-dimensional array of values of the same type; matrices have a dimension given as (row, column), length returns the number of items (row x column)
+
+* **Array**: any higher dimensional array (e.g. output of temperature data from netcdf data)
+
+---
+
+## Basic Data Structures
+
+`str()` can be used to examine a variable and determine its structure:
+
+```{r, include = F}
+library(tidyverse)
+```
+
+```{r, eval = -1}
+library(tidyverse)
+data("mtcars")
+str(mtcars)
+```
+---
+
+## Basic Data Structures
+
+`str()` can be used to examine a variable and determine its structure:
+```{r}
+data("eurodist")
+str(eurodist)
+```
+---
+
+## Basic Data Structures
+
+`str()` can be used to examine a variable and determine its structure:
+```{r}
+data("discoveries")
+str(discoveries)
+```
+---
+
+## Basic Data Structures
+
+`str()` can be used to examine a variable and determine its structure:
+```{r}
+data("occupationalStatus")
+str(occupationalStatus)
+```
+---
+
+## Basic Data Structures
+
+`str()` can be used to examine a variable and determine its structure:
+```{r}
+str(c(5:15))
+str(month.name)
+str(3)
+str(mean)
+```
+
+
+---
+
+
+
 ## Data frames
 
+Data frame: collection of vectors of same length but possibly different types
 ```{r}
-simple_df <- data.frame(letters = letters, order = 1:26)
-str(simple_df)
+L3 <- LETTERS[1:3]
+d <- data.frame(
+        x=1, 
+        y=1:10, 
+        fac=sample(L3, 10, replace=TRUE))
+d %>% glimpse()
+```
 
-mode(simple_df)
+---
+
+## Data frames are lists
+
+But not all lists are data frames
+
+```{r}
+str(d)
+
+mode(d)
 ```
 
 Data frames are lists of vectors where each vector is constrained to have the same length
 
 ---
+class: inverse, center, middle
+# Lists
 
-## "Hidden" Lists
+---
 
-We could convert the data frame to a list by changing its class:
+## Lists
+
+* lists allow the most flexibility, i.e. are not very structured. 
+
+* a list element can be anything, including another list
+
+* very useful (and common) as output from analytic methods
+
+* lists can also be variables in a dataset
 
 ```{r}
-class(simple_df) <- "list"
-simple_df
+mod<-glm(mpg~cyl+disp+hp+drat+wt, data=mtcars)
+mode(mod)
 ```
 
 ---
 
-## Examining Lists
+## Lists are usually quite unwieldy
+
 ```{r}
+str(mod)
+```
+
+---
+
+## Working with lists
+
+* single bracket operator [ ] returns a (usually smaller) list
+
+```{r}
+mod[c(1,6,8)]
+```
+
+---
+
+## Working with lists 
+
+* double bracket operator `[[ ]]` returns single list element (i.e. only single positive integer is allowed as index)
+
+* similarly, named objects can be accessed using the `$` operator
+
+```{r}
+mod[[1]]
+mod$rank
+```
+
+---
+class: inverse
+## Your Turn
+
+The package `repurrrsive` helps with working with lists, it also has some fun data for us to work with.
+
+- install the package `repurrrsive` 
+
+- activate (using the function `data`) the object `got_chars` and check that it is a list.
+
+- what does this object describe?
+
+- can the object be converted to a data frame? If so, how? If not, why?
+
+---
+class: middle, center
+
+
+... only once you tried, you know the drill :) ...
+
+---
+
+```{r}
+# install.packages("repurrrsive")
 library(repurrrsive)
 data(got_chars) # Game of Thrones characters
+is.list(got_chars)
+mode(got_chars)
 str(got_chars)
 ```
 
@@ -224,8 +359,17 @@ RStudio has a built-in list viewer
 ![Screenshot of list viewer](list_viewer.png)
 
 ---
+class: inverse
+## Your Turn
 
-## Extracting Elements from Lists
+
+- extract the first element from `got_chars`. Which GoT character does it describe?
+
+- is this character still alive?
+
+- how many of the other characters are still alive? (This question is astonishingly tedious to answer with the tools we have discusses so far)
+
+---
 
 ```{r, collapse=TRUE}
 theon <- got_chars[[1]] # Gets 1st list element
@@ -251,147 +395,22 @@ theon[3:5]
 
 ---
 
-## Indexing
+## Indexing - Recap
 
 So [what's the difference](https://cran.r-project.org/doc/manuals/R-lang.html#Indexing) between `x$.`, `x[[.]]` and `x[.]`?
-
-`x[[.]]`
-- Returns a single element
-- Selection by numerical or character index
 
 `x[.]`
 - Returns a list
 - Allows indexing by vectors
 
+
+`x[[.]]`
+- Returns a single element
+- Selection by numerical or character index
+
+
 `x$.`
 - Returns a list component
 - Indexing by component name (doesn't work on unnamed lists)
 
----
 
-## Extracting Elements from Lists
-The `magrittr` package contains a collection of pipe-friendly replacements for base R functions.
-
-```{r, echo = -1}
-suppressPackageStartupMessages(library(magrittr))
-library(magrittr)
-got_chars %>%
-  extract2(1) %>% # extract2 is the pipe version of [[.]]
-  extract(3) # extract is the pipe version of [.]
-
-# unlist() creates a vector from a list by concatenating 
-# and type-converting the list elements
-got_chars %>% extract2(1) %>% extract(c(3, 10)) %>% unlist()
-```
-
----
-class: inverse
-## Your Turn
-
-Explore the `got_chars` object from the `repurrrsive` package. 
-
-```{r, eval = -1}
-devtools::install_github("jennybc/repurrrsive")
-library(repurrrsive)
-data("got_chars")
-```
-
-1. Can it be converted to a data frame? Why or why not?
-
-2. Use base R operators (`[[`, `[`, and `$`) to determine who the 8th character in the list is, and what their allegiance is.
-
-3. Use `magrittr` operators (`extract2` and `extract`) to determine who the 5th character in the list is, and whether they are currently alive.
-
----
-
-## Working with Lists
-
-The `purrr` [package](http://purrr.tidyverse.org/) contains tools for working with lists more easily. It is part of the tidyverse. 
-
-Purrr functions operate by applying a function to every element (or chunk) of a list or data frame. 
-`map` is the basic function and returns the function's results as a list (by default). 
-
-```{r, echo = -1}
-suppressPackageStartupMessages(library(purrr))
-library(purrr)
-
-# Get the length of each list in got_chars
-map(got_chars, length) 
-```
-
----
-
-## Working with Lists
-
-Specify the type using `map_int`, `map_chr`, `map_df`, and others
-
-```{r}
-map_int(got_chars, length)
-
-# Map names() to a data frame column
-map_dfc(got_chars, names)
-```
-
----
-
-## Working with Lists
-
-Purrr comes with a few shortcuts, too:
-
-```{r}
-# For each element in got_chars, get the "name" element
-map_chr(got_chars, "name")
-```
-
----
-
-## Working with Lists
-
-Purrr comes with a few shortcuts, too:
-
-```{r}
-# For each element in got_chars, get the 1st element
-map_chr(got_chars[1:5], 1)
-```
-
----
-class:inverse
-## Your Turn
-
-```{r}
-library(dplyr)
-library(purrr)
-```
-
-1. What are the types of each character attribute? (It's ok to look at just the 1st character)
-```{r, eval = F, include = F}
-map(got_chars[[1]], typeof)
-```
-
-2. Which attributes have multiple entries per character? Do any attributes have no entries for all characters?
-
-```{r, include = F, eval = F}
-map_df(got_chars, ~map_dfc(., length))
-```
-
-3. Assemble a data frame of Game of Thrones characters column-by-column using appropriate `map_*` functions. Which columns cannot be easily included? 
-```{r, include = F, eval = F}
-# Really fancy solution...
-test <- map(ok_cols, ~try(map_chr(got_chars, .)))
-failed_cols <- which(map(test, length) == 1)
-bind_cols(test[-failed_cols]) %>%
-  mutate(id = as.integer(id), alive = as.logical(alive))
-
-# Actual solution
-data.frame(
-  name = map_chr(got_chars, "name"),
-  url = map_chr(got_chars, "url"),
-  id = map_int(got_chars, "id"),
-  gender = map_chr(got_chars, "gender")
-)
-
-```
-4. How many of the characters are still alive?
-```{r, include = F, eval = F}
-sum(map_lgl(got_chars, "alive"))
-```

@@ -35,9 +35,305 @@ integer | 2
 character | "hello world"
 logical | TRUE
 
-Convert between data types with `as.XXX`, e.g. `as.numeric("2.394")` or `as.character("3.14159")`
+Convert between data types with **cast operators** 
+```
+as.character, as.numeric, as.logical, as.integer, ...
+```
+e.g. `as.numeric("2.394")` or `as.character("3.14159")`
 
 Test whether something has a data type with `is.XXX`, e.g. `is.character("fuzzy puppies")` or `is.logical("abcde")`
+
+---
+
+## Numeric values
+
+Numeric objects have double precision, i.e. work with 53 bits 
+
+```r
+pi &lt;- as.numeric(gsub(" ","","3.14159 26535 89793 23846 26433"))
+# maximum number of digist that can be shown is 22
+print(pi, digits=22)
+```
+
+```
+## [1] 3.141592653589793115998
+```
+first 15 digits are fine, anything beyond that is suspicious and most likely incorrect
+
+
+Precision is machine dependent
+
+---
+
+## `.Machine$double.eps`
+
+`.Machine$double.eps` is the machine's difference between two consecutive real valued numbers
+
+
+```r
+.Machine$double.eps
+```
+
+```
+## [1] 2.220446e-16
+```
+
+```r
+1 + .Machine$double.eps == 1
+```
+
+```
+## [1] FALSE
+```
+
+```r
+1 + .Machine$double.eps/2 == 1
+```
+
+```
+## [1] TRUE
+```
+
+---
+
+
+```r
+.Machine
+```
+
+```
+## $double.eps
+## [1] 2.220446e-16
+## 
+## $double.neg.eps
+## [1] 1.110223e-16
+## 
+## $double.xmin
+## [1] 2.225074e-308
+## 
+## $double.xmax
+## [1] 1.797693e+308
+## 
+## $double.base
+## [1] 2
+## 
+## $double.digits
+## [1] 53
+## 
+## $double.rounding
+## [1] 5
+## 
+## $double.guard
+## [1] 0
+## 
+## $double.ulp.digits
+## [1] -52
+## 
+## $double.neg.ulp.digits
+## [1] -53
+## 
+## $double.exponent
+## [1] 11
+## 
+## $double.min.exp
+## [1] -1022
+## 
+## $double.max.exp
+## [1] 1024
+## 
+## $integer.max
+## [1] 2147483647
+## 
+## $sizeof.long
+## [1] 8
+## 
+## $sizeof.longlong
+## [1] 8
+## 
+## $sizeof.longdouble
+## [1] 16
+## 
+## $sizeof.pointer
+## [1] 8
+```
+
+
+---
+
+## Factors
+
+Some data has both names and a defined numerical ordering:
+
+```r
+month.name
+```
+
+```
+##  [1] "January"   "February"  "March"     "April"    
+##  [5] "May"       "June"      "July"      "August"   
+##  [9] "September" "October"   "November"  "December"
+```
+
+Factors are used to store both the numerical values and the associated labels:
+
+```r
+factor(month.name)
+```
+
+```
+##  [1] January   February  March     April     May      
+##  [6] June      July      August    September October  
+## [11] November  December 
+## 12 Levels: April August December February January ... September
+```
+
+By default, R uses alphabetical order for factors...
+
+---
+
+## Factors
+
+```r
+factor(month.name)
+```
+
+```
+##  [1] January   February  March     April     May      
+##  [6] June      July      August    September October  
+## [11] November  December 
+## 12 Levels: April August December February January ... September
+```
+
+By default, R uses alphabetical order for factors...
+
+Set level names to override the default ordering 
+
+```r
+months &lt;- factor(month.name, levels = month.name)
+months
+```
+
+```
+##  [1] January   February  March     April     May      
+##  [6] June      July      August    September October  
+## [11] November  December 
+## 12 Levels: January February March April May June ... December
+```
+
+
+---
+
+## Factors
+
+You can access the labels of a factor using `levels()`
+
+```r
+levels(months)
+```
+
+```
+##  [1] "January"   "February"  "March"     "April"    
+##  [5] "May"       "June"      "July"      "August"   
+##  [9] "September" "October"   "November"  "December"
+```
+
+You can access the order of the factor using `as.numeric()`:
+
+```r
+as.numeric(months)
+```
+
+```
+##  [1]  1  2  3  4  5  6  7  8  9 10 11 12
+```
+
+---
+
+## Type Conversions
+
+```r
+# Get a numeric vector
+x &lt;- sample(1:10, 5)
+x
+```
+
+```
+## [1]  8  1 10  3  2
+```
+
+```r
+# Create factor from numeric vector
+fac_x &lt;- factor(x)
+fac_x
+```
+
+```
+## [1] 8  1  10 3  2 
+## Levels: 1 2 3 8 10
+```
+
+```r
+# Convert factor to numeric
+as.numeric(fac_x) # Huh?
+```
+
+```
+## [1] 4 1 5 3 2
+```
+`as.numeric()` converts factors to their level numbers, not to their labels
+
+---
+
+## Type Conversions
+
+
+```r
+as.character(fac_x)
+```
+
+```
+## [1] "8"  "1"  "10" "3"  "2"
+```
+
+```r
+as.numeric(as.character(fac_x))
+```
+
+```
+## [1]  8  1 10  3  2
+```
+`as.character()` extracts the labels; you can then use `as.numeric` to get the labels' numeric value.
+
+---
+
+## Type conversions
+
+implicit type conversions happen all the time:
+
+```r
+x &lt;- c("4.5", 3, TRUE, "elephant")
+# The logical value becomes a character
+x
+```
+
+```
+## [1] "4.5"      "3"        "TRUE"     "elephant"
+```
+
+
+Note that the cast from logical to  character doesn't survive intact
+
+```r
+as.numeric(x) 
+```
+
+```
+## Warning: NAs introduced by coercion
+```
+
+```
+## [1] 4.5 3.0  NA  NA
+```
 
 ---
 
@@ -47,11 +343,17 @@ Data structures hold one or more basic data types and may have multiple dimensio
 
    | One type | Multiple Types
 -- | -------- | --------------
-1D | Atomic vector | List
+1D | (Atomic) Vector | List
 2D | Matrix | Data frame
 nD | Array | 
 
 An individual value ("scalar" in other languages) is a length one vector in R
+
+* **Vectors**: one-dimensional array of values of the same type; vectors have a length, but no dimension
+
+* **Matrix**: two-dimensional array of values of the same type; matrices have a dimension given as (row, column), length returns the number of items (row x column)
+
+* **Array**: any higher dimensional array (e.g. output of temperature data from netcdf data)
 
 ---
 
@@ -167,178 +469,52 @@ str(mean)
 ## function (x, ...)
 ```
 
----
-class: center, middle
-# Factors
 
 ---
 
-## Factors
 
-Some data has both names and a defined numerical ordering:
-
-```r
-month.name
-```
-
-```
-##  [1] "January"   "February"  "March"     "April"    
-##  [5] "May"       "June"      "July"      "August"   
-##  [9] "September" "October"   "November"  "December"
-```
-
-Factors are used to store both the numerical values and the associated labels:
-
-```r
-factor(month.name)
-```
-
-```
-##  [1] January   February  March     April     May      
-##  [6] June      July      August    September October  
-## [11] November  December 
-## 12 Levels: April August December February January ... September
-```
-
-By default, R uses alphabetical order for factors...
-
----
-
-## Factors
-
-```r
-factor(month.name)
-```
-
-```
-##  [1] January   February  March     April     May      
-##  [6] June      July      August    September October  
-## [11] November  December 
-## 12 Levels: April August December February January ... September
-```
-
-By default, R uses alphabetical order for factors...
-
-Set level names to override the default ordering 
-
-```r
-months &lt;- factor(month.name, levels = month.name)
-months
-```
-
-```
-##  [1] January   February  March     April     May      
-##  [6] June      July      August    September October  
-## [11] November  December 
-## 12 Levels: January February March April May June ... December
-```
-
-
----
-
-## Factors
-
-You can access the labels of a factor using `levels()`
-
-```r
-levels(months)
-```
-
-```
-##  [1] "January"   "February"  "March"     "April"    
-##  [5] "May"       "June"      "July"      "August"   
-##  [9] "September" "October"   "November"  "December"
-```
-
-You can access the order of the factor using `as.numeric()`:
-
-```r
-as.numeric(months)
-```
-
-```
-##  [1]  1  2  3  4  5  6  7  8  9 10 11 12
-```
-
----
-
-## Type Conversions
-
-```r
-# Get a numeric vector
-x &lt;- sample(1:10, 5)
-x
-```
-
-```
-## [1] 3 4 5 9 7
-```
-
-```r
-# Create factor from numeric vector
-fac_x &lt;- factor(x)
-fac_x
-```
-
-```
-## [1] 3 4 5 9 7
-## Levels: 3 4 5 7 9
-```
-
-```r
-# Convert factor to numeric
-as.numeric(fac_x) # Huh?
-```
-
-```
-## [1] 1 2 3 5 4
-```
-`as.numeric()` converts factors to their level numbers, not to their labels
-
----
-
-## Type Conversions
-
-
-```r
-as.character(fac_x)
-```
-
-```
-## [1] "3" "4" "5" "9" "7"
-```
-
-```r
-as.numeric(as.character(fac_x))
-```
-
-```
-## [1] 3 4 5 9 7
-```
-`as.character()` extracts the labels; you can then use `as.numeric` to get the labels' numeric value.
-
----
-class:center, middle
-# Lists
-
----
 
 ## Data frames
 
+Data frame: collection of vectors of same length but possibly different types
 
 ```r
-simple_df &lt;- data.frame(letters = letters, order = 1:26)
-str(simple_df)
+L3 &lt;- LETTERS[1:3]
+d &lt;- data.frame(
+        x=1, 
+        y=1:10, 
+        fac=sample(L3, 10, replace=TRUE))
+d %&gt;% glimpse()
 ```
 
 ```
-## 'data.frame':	26 obs. of  2 variables:
-##  $ letters: Factor w/ 26 levels "a","b","c","d",..: 1 2 3 4 5 6 7 8 9 10 ...
-##  $ order  : int  1 2 3 4 5 6 7 8 9 10 ...
+## Observations: 10
+## Variables: 3
+## $ x   &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+## $ y   &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+## $ fac &lt;fct&gt; A, C, A, B, B, C, B, B, C, C
+```
+
+---
+
+## Data frames are lists
+
+But not all lists are data frames
+
+
+```r
+str(d)
+```
+
+```
+## 'data.frame':	10 obs. of  3 variables:
+##  $ x  : num  1 1 1 1 1 1 1 1 1 1
+##  $ y  : int  1 2 3 4 5 6 7 8 9 10
+##  $ fac: Factor w/ 3 levels "A","B","C": 1 3 1 2 2 3 2 2 3 3
 ```
 
 ```r
-mode(simple_df)
+mode(d)
 ```
 
 ```
@@ -348,38 +524,253 @@ mode(simple_df)
 Data frames are lists of vectors where each vector is constrained to have the same length
 
 ---
+class: inverse, center, middle
+# Lists
 
-## "Hidden" Lists
+---
 
-We could convert the data frame to a list by changing its class:
+## Lists
+
+* lists allow the most flexibility, i.e. are not very structured. 
+
+* a list element can be anything, including another list
+
+* very useful (and common) as output from analytic methods
+
+* lists can also be variables in a dataset
 
 
 ```r
-class(simple_df) &lt;- "list"
-simple_df
+mod&lt;-glm(mpg~cyl+disp+hp+drat+wt, data=mtcars)
+mode(mod)
 ```
 
 ```
-## $letters
-##  [1] a b c d e f g h i j k l m n o p q r s t u v w x y z
-## 26 Levels: a b c d e f g h i j k l m n o p q r s t u ... z
-## 
-## $order
-##  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18
-## [19] 19 20 21 22 23 24 25 26
-## 
-## attr(,"row.names")
-##  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18
-## [19] 19 20 21 22 23 24 25 26
+## [1] "list"
 ```
 
 ---
 
-## Examining Lists
+## Lists are usually quite unwieldy
+
 
 ```r
+str(mod)
+```
+
+```
+## List of 30
+##  $ coefficients     : Named num [1:6] 36.0084 -1.1075 0.0124 -0.024 0.9522 ...
+##   ..- attr(*, "names")= chr [1:6] "(Intercept)" "cyl" "disp" "hp" ...
+##  $ residuals        : Named num [1:32] -1.788 -0.852 -3.023 0.367 0.943 ...
+##   ..- attr(*, "names")= chr [1:32] "Mazda RX4" "Mazda RX4 Wag" "Datsun 710" "Hornet 4 Drive" ...
+##  $ fitted.values    : Named num [1:32] 22.8 21.9 25.8 21 17.8 ...
+##   ..- attr(*, "names")= chr [1:32] "Mazda RX4" "Mazda RX4 Wag" "Datsun 710" "Hornet 4 Drive" ...
+##  $ effects          : Named num [1:32] -113.65 -28.6 6.13 -3.06 -4.06 ...
+##   ..- attr(*, "names")= chr [1:32] "(Intercept)" "cyl" "disp" "hp" ...
+##  $ R                : num [1:6, 1:6] -5.66 0 0 0 0 ...
+##   ..- attr(*, "dimnames")=List of 2
+##   .. ..$ : chr [1:6] "(Intercept)" "cyl" "disp" "hp" ...
+##   .. ..$ : chr [1:6] "(Intercept)" "cyl" "disp" "hp" ...
+##  $ rank             : int 6
+##  $ qr               :List of 5
+##   ..$ qr   : num [1:32, 1:6] -5.657 0.177 0.177 0.177 0.177 ...
+##   .. ..- attr(*, "dimnames")=List of 2
+##   .. .. ..$ : chr [1:32] "Mazda RX4" "Mazda RX4 Wag" "Datsun 710" "Hornet 4 Drive" ...
+##   .. .. ..$ : chr [1:6] "(Intercept)" "cyl" "disp" "hp" ...
+##   ..$ rank : int 6
+##   ..$ qraux: num [1:6] 1.18 1.02 1.11 1.17 1.08 ...
+##   ..$ pivot: int [1:6] 1 2 3 4 5 6
+##   ..$ tol  : num 1e-11
+##   ..- attr(*, "class")= chr "qr"
+##  $ family           :List of 11
+##   ..$ family    : chr "gaussian"
+##   ..$ link      : chr "identity"
+##   ..$ linkfun   :function (mu)  
+##   ..$ linkinv   :function (eta)  
+##   ..$ variance  :function (mu)  
+##   ..$ dev.resids:function (y, mu, wt)  
+##   ..$ aic       :function (y, n, mu, wt, dev)  
+##   ..$ mu.eta    :function (eta)  
+##   ..$ initialize:  expression({  n &lt;- rep.int(1, nobs)  if (is.null(etastart) &amp;&amp; is.null(start) &amp;&amp; is.null(mustart) &amp;&amp;  ((family$lin| __truncated__
+##   ..$ validmu   :function (mu)  
+##   ..$ valideta  :function (eta)  
+##   ..- attr(*, "class")= chr "family"
+##  $ linear.predictors: Named num [1:32] 22.8 21.9 25.8 21 17.8 ...
+##   ..- attr(*, "names")= chr [1:32] "Mazda RX4" "Mazda RX4 Wag" "Datsun 710" "Hornet 4 Drive" ...
+##  $ deviance         : num 167
+##  $ aic              : num 158
+##  $ null.deviance    : num 1126
+##  $ iter             : int 2
+##  $ weights          : Named num [1:32] 1 1 1 1 1 1 1 1 1 1 ...
+##   ..- attr(*, "names")= chr [1:32] "Mazda RX4" "Mazda RX4 Wag" "Datsun 710" "Hornet 4 Drive" ...
+##  $ prior.weights    : Named num [1:32] 1 1 1 1 1 1 1 1 1 1 ...
+##   ..- attr(*, "names")= chr [1:32] "Mazda RX4" "Mazda RX4 Wag" "Datsun 710" "Hornet 4 Drive" ...
+##  $ df.residual      : int 26
+##  $ df.null          : int 31
+##  $ y                : Named num [1:32] 21 21 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 ...
+##   ..- attr(*, "names")= chr [1:32] "Mazda RX4" "Mazda RX4 Wag" "Datsun 710" "Hornet 4 Drive" ...
+##  $ converged        : logi TRUE
+##  $ boundary         : logi FALSE
+##  $ model            :'data.frame':	32 obs. of  6 variables:
+##   ..$ mpg : num [1:32] 21 21 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 ...
+##   ..$ cyl : num [1:32] 6 6 4 6 8 6 8 4 4 6 ...
+##   ..$ disp: num [1:32] 160 160 108 258 360 ...
+##   ..$ hp  : num [1:32] 110 110 93 110 175 105 245 62 95 123 ...
+##   ..$ drat: num [1:32] 3.9 3.9 3.85 3.08 3.15 2.76 3.21 3.69 3.92 3.92 ...
+##   ..$ wt  : num [1:32] 2.62 2.88 2.32 3.21 3.44 ...
+##   ..- attr(*, "terms")=Classes 'terms', 'formula'  language mpg ~ cyl + disp + hp + drat + wt
+##   .. .. ..- attr(*, "variables")= language list(mpg, cyl, disp, hp, drat, wt)
+##   .. .. ..- attr(*, "factors")= int [1:6, 1:5] 0 1 0 0 0 0 0 0 1 0 ...
+##   .. .. .. ..- attr(*, "dimnames")=List of 2
+##   .. .. .. .. ..$ : chr [1:6] "mpg" "cyl" "disp" "hp" ...
+##   .. .. .. .. ..$ : chr [1:5] "cyl" "disp" "hp" "drat" ...
+##   .. .. ..- attr(*, "term.labels")= chr [1:5] "cyl" "disp" "hp" "drat" ...
+##   .. .. ..- attr(*, "order")= int [1:5] 1 1 1 1 1
+##   .. .. ..- attr(*, "intercept")= int 1
+##   .. .. ..- attr(*, "response")= int 1
+##   .. .. ..- attr(*, ".Environment")=&lt;environment: R_GlobalEnv&gt; 
+##   .. .. ..- attr(*, "predvars")= language list(mpg, cyl, disp, hp, drat, wt)
+##   .. .. ..- attr(*, "dataClasses")= Named chr [1:6] "numeric" "numeric" "numeric" "numeric" ...
+##   .. .. .. ..- attr(*, "names")= chr [1:6] "mpg" "cyl" "disp" "hp" ...
+##  $ call             : language glm(formula = mpg ~ cyl + disp + hp + drat + wt, data = mtcars)
+##  $ formula          :Class 'formula'  language mpg ~ cyl + disp + hp + drat + wt
+##   .. ..- attr(*, ".Environment")=&lt;environment: R_GlobalEnv&gt; 
+##  $ terms            :Classes 'terms', 'formula'  language mpg ~ cyl + disp + hp + drat + wt
+##   .. ..- attr(*, "variables")= language list(mpg, cyl, disp, hp, drat, wt)
+##   .. ..- attr(*, "factors")= int [1:6, 1:5] 0 1 0 0 0 0 0 0 1 0 ...
+##   .. .. ..- attr(*, "dimnames")=List of 2
+##   .. .. .. ..$ : chr [1:6] "mpg" "cyl" "disp" "hp" ...
+##   .. .. .. ..$ : chr [1:5] "cyl" "disp" "hp" "drat" ...
+##   .. ..- attr(*, "term.labels")= chr [1:5] "cyl" "disp" "hp" "drat" ...
+##   .. ..- attr(*, "order")= int [1:5] 1 1 1 1 1
+##   .. ..- attr(*, "intercept")= int 1
+##   .. ..- attr(*, "response")= int 1
+##   .. ..- attr(*, ".Environment")=&lt;environment: R_GlobalEnv&gt; 
+##   .. ..- attr(*, "predvars")= language list(mpg, cyl, disp, hp, drat, wt)
+##   .. ..- attr(*, "dataClasses")= Named chr [1:6] "numeric" "numeric" "numeric" "numeric" ...
+##   .. .. ..- attr(*, "names")= chr [1:6] "mpg" "cyl" "disp" "hp" ...
+##  $ data             :'data.frame':	32 obs. of  11 variables:
+##   ..$ mpg : num [1:32] 21 21 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 ...
+##   ..$ cyl : num [1:32] 6 6 4 6 8 6 8 4 4 6 ...
+##   ..$ disp: num [1:32] 160 160 108 258 360 ...
+##   ..$ hp  : num [1:32] 110 110 93 110 175 105 245 62 95 123 ...
+##   ..$ drat: num [1:32] 3.9 3.9 3.85 3.08 3.15 2.76 3.21 3.69 3.92 3.92 ...
+##   ..$ wt  : num [1:32] 2.62 2.88 2.32 3.21 3.44 ...
+##   ..$ qsec: num [1:32] 16.5 17 18.6 19.4 17 ...
+##   ..$ vs  : num [1:32] 0 0 1 1 0 1 0 1 1 1 ...
+##   ..$ am  : num [1:32] 1 1 1 0 0 0 0 0 0 0 ...
+##   ..$ gear: num [1:32] 4 4 4 3 3 3 3 4 4 4 ...
+##   ..$ carb: num [1:32] 4 4 1 1 2 1 4 2 2 4 ...
+##  $ offset           : NULL
+##  $ control          :List of 3
+##   ..$ epsilon: num 1e-08
+##   ..$ maxit  : num 25
+##   ..$ trace  : logi FALSE
+##  $ method           : chr "glm.fit"
+##  $ contrasts        : NULL
+##  $ xlevels          : Named list()
+##  - attr(*, "class")= chr [1:2] "glm" "lm"
+```
+
+---
+
+## Working with lists
+
+* single bracket operator [ ] returns a (usually smaller) list
+
+
+```r
+mod[c(1,6,8)]
+```
+
+```
+## $coefficients
+## (Intercept)         cyl        disp          hp        drat 
+## 36.00835689 -1.10748650  0.01235733 -0.02401743  0.95220742 
+##          wt 
+## -3.67328708 
+## 
+## $rank
+## [1] 6
+## 
+## $family
+## 
+## Family: gaussian 
+## Link function: identity
+```
+
+---
+
+## Working with lists 
+
+* double bracket operator `[[ ]]` returns single list element (i.e. only single positive integer is allowed as index)
+
+* similarly, named objects can be accessed using the `$` operator
+
+
+```r
+mod[[1]]
+```
+
+```
+## (Intercept)         cyl        disp          hp        drat 
+## 36.00835689 -1.10748650  0.01235733 -0.02401743  0.95220742 
+##          wt 
+## -3.67328708
+```
+
+```r
+mod$rank
+```
+
+```
+## [1] 6
+```
+
+---
+class: inverse
+## Your Turn
+
+The package `repurrrsive` helps with working with lists, it also has some fun data for us to work with.
+
+- install the package `repurrrsive` 
+
+- activate (using the function `data`) the object `got_chars` and check that it is a list.
+
+- what does this object describe?
+
+- can the object be converted to a data frame? If so, how? If not, why?
+
+---
+class: middle, center
+
+
+... only once you tried, you know the drill :) ...
+
+---
+
+
+```r
+# install.packages("repurrrsive")
 library(repurrrsive)
 data(got_chars) # Game of Thrones characters
+is.list(got_chars)
+```
+
+```
+## [1] TRUE
+```
+
+```r
+mode(got_chars)
+```
+
+```
+## [1] "list"
+```
+
+```r
 str(got_chars)
 ```
 
@@ -965,8 +1356,17 @@ RStudio has a built-in list viewer
 ![Screenshot of list viewer](list_viewer.png)
 
 ---
+class: inverse
+## Your Turn
 
-## Extracting Elements from Lists
+
+- extract the first element from `got_chars`. Which GoT character does it describe?
+
+- is this character still alive?
+
+- how many of the other characters are still alive? (This question is astonishingly tedious to answer with the tools we have discusses so far)
+
+---
 
 
 ```r
@@ -1028,301 +1428,23 @@ theon[3:5]
 
 ---
 
-## Indexing
+## Indexing - Recap
 
 So [what's the difference](https://cran.r-project.org/doc/manuals/R-lang.html#Indexing) between `x$.`, `x[[.]]` and `x[.]`?
-
-`x[[.]]`
-- Returns a single element
-- Selection by numerical or character index
 
 `x[.]`
 - Returns a list
 - Allows indexing by vectors
 
+
+`x[[.]]`
+- Returns a single element
+- Selection by numerical or character index
+
+
 `x$.`
 - Returns a list component
 - Indexing by component name (doesn't work on unnamed lists)
-
----
-
-## Extracting Elements from Lists
-The `magrittr` package contains a collection of pipe-friendly replacements for base R functions.
-
-
-```r
-library(magrittr)
-got_chars %&gt;%
-  extract2(1) %&gt;% # extract2 is the pipe version of [[.]]
-  extract(3) # extract is the pipe version of [.]
-```
-
-```
-## $name
-## [1] "Theon Greyjoy"
-```
-
-```r
-# unlist() creates a vector from a list by concatenating 
-# and type-converting the list elements
-got_chars %&gt;% extract2(1) %&gt;% extract(c(3, 10)) %&gt;% unlist()
-```
-
-```
-##              name          aliases1          aliases2 
-##   "Theon Greyjoy" "Prince of Fools" "Theon Turncloak" 
-##          aliases3          aliases4 
-##            "Reek" "Theon Kinslayer"
-```
-
----
-class: inverse
-## Your Turn
-
-Explore the `got_chars` object from the `repurrrsive` package. 
-
-
-```r
-## devtools::install_github("jennybc/repurrrsive")
-library(repurrrsive)
-data("got_chars")
-```
-
-1. Can it be converted to a data frame? Why or why not?
-
-2. Use base R operators (`[[`, `[`, and `$`) to determine who the 8th character in the list is, and what their allegiance is.
-
-3. Use `magrittr` operators (`extract2` and `extract`) to determine who the 5th character in the list is, and whether they are currently alive.
-
----
-
-## Working with Lists
-
-The `purrr` [package](http://purrr.tidyverse.org/) contains tools for working with lists more easily. It is part of the tidyverse. 
-
-Purrr functions operate by applying a function to every element (or chunk) of a list or data frame. 
-`map` is the basic function and returns the function's results as a list (by default). 
-
-
-```r
-library(purrr)
-
-# Get the length of each list in got_chars
-map(got_chars, length) 
-```
-
-```
-## [[1]]
-## [1] 18
-## 
-## [[2]]
-## [1] 18
-## 
-## [[3]]
-## [1] 18
-## 
-## [[4]]
-## [1] 18
-## 
-## [[5]]
-## [1] 18
-## 
-## [[6]]
-## [1] 18
-## 
-## [[7]]
-## [1] 18
-## 
-## [[8]]
-## [1] 18
-## 
-## [[9]]
-## [1] 18
-## 
-## [[10]]
-## [1] 18
-## 
-## [[11]]
-## [1] 18
-## 
-## [[12]]
-## [1] 18
-## 
-## [[13]]
-## [1] 18
-## 
-## [[14]]
-## [1] 18
-## 
-## [[15]]
-## [1] 18
-## 
-## [[16]]
-## [1] 18
-## 
-## [[17]]
-## [1] 18
-## 
-## [[18]]
-## [1] 18
-## 
-## [[19]]
-## [1] 18
-## 
-## [[20]]
-## [1] 18
-## 
-## [[21]]
-## [1] 18
-## 
-## [[22]]
-## [1] 18
-## 
-## [[23]]
-## [1] 18
-## 
-## [[24]]
-## [1] 18
-## 
-## [[25]]
-## [1] 18
-## 
-## [[26]]
-## [1] 18
-## 
-## [[27]]
-## [1] 18
-## 
-## [[28]]
-## [1] 18
-## 
-## [[29]]
-## [1] 18
-## 
-## [[30]]
-## [1] 18
-```
-
----
-
-## Working with Lists
-
-Specify the type using `map_int`, `map_chr`, `map_df`, and others
-
-
-```r
-map_int(got_chars, length)
-```
-
-```
-##  [1] 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18
-## [19] 18 18 18 18 18 18 18 18 18 18 18 18
-```
-
-```r
-# Map names() to a data frame column
-map_dfc(got_chars, names)
-```
-
-```
-## # A tibble: 18 x 30
-##    V1     V2     V3     V4    V5    V6    V7    V8    V9   
-##    &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
-##  1 url    url    url    url   url   url   url   url   url  
-##  2 id     id     id     id    id    id    id    id    id   
-##  3 name   name   name   name  name  name  name  name  name 
-##  4 gender gender gender gend… gend… gend… gend… gend… gend…
-##  5 cultu… cultu… cultu… cult… cult… cult… cult… cult… cult…
-##  6 born   born   born   born  born  born  born  born  born 
-##  7 died   died   died   died  died  died  died  died  died 
-##  8 alive  alive  alive  alive alive alive alive alive alive
-##  9 titles titles titles titl… titl… titl… titl… titl… titl…
-## 10 alias… alias… alias… alia… alia… alia… alia… alia… alia…
-## 11 father father father fath… fath… fath… fath… fath… fath…
-## 12 mother mother mother moth… moth… moth… moth… moth… moth…
-## 13 spouse spouse spouse spou… spou… spou… spou… spou… spou…
-## 14 alleg… alleg… alleg… alle… alle… alle… alle… alle… alle…
-## 15 books  books  books  books books books books books books
-## 16 povBo… povBo… povBo… povB… povB… povB… povB… povB… povB…
-## 17 tvSer… tvSer… tvSer… tvSe… tvSe… tvSe… tvSe… tvSe… tvSe…
-## 18 playe… playe… playe… play… play… play… play… play… play…
-## # ... with 21 more variables: V10 &lt;chr&gt;, V11 &lt;chr&gt;,
-## #   V12 &lt;chr&gt;, V13 &lt;chr&gt;, V14 &lt;chr&gt;, V15 &lt;chr&gt;, V16 &lt;chr&gt;,
-## #   V17 &lt;chr&gt;, V18 &lt;chr&gt;, V19 &lt;chr&gt;, V20 &lt;chr&gt;, V21 &lt;chr&gt;,
-## #   V22 &lt;chr&gt;, V23 &lt;chr&gt;, V24 &lt;chr&gt;, V25 &lt;chr&gt;, V26 &lt;chr&gt;,
-## #   V27 &lt;chr&gt;, V28 &lt;chr&gt;, V29 &lt;chr&gt;, V30 &lt;chr&gt;
-```
-
----
-
-## Working with Lists
-
-Purrr comes with a few shortcuts, too:
-
-
-```r
-# For each element in got_chars, get the "name" element
-map_chr(got_chars, "name")
-```
-
-```
-##  [1] "Theon Greyjoy"      "Tyrion Lannister"  
-##  [3] "Victarion Greyjoy"  "Will"              
-##  [5] "Areo Hotah"         "Chett"             
-##  [7] "Cressen"            "Arianne Martell"   
-##  [9] "Daenerys Targaryen" "Davos Seaworth"    
-## [11] "Arya Stark"         "Arys Oakheart"     
-## [13] "Asha Greyjoy"       "Barristan Selmy"   
-## [15] "Varamyr"            "Brandon Stark"     
-## [17] "Brienne of Tarth"   "Catelyn Stark"     
-## [19] "Cersei Lannister"   "Eddard Stark"      
-## [21] "Jaime Lannister"    "Jon Connington"    
-## [23] "Jon Snow"           "Aeron Greyjoy"     
-## [25] "Kevan Lannister"    "Melisandre"        
-## [27] "Merrett Frey"       "Quentyn Martell"   
-## [29] "Samwell Tarly"      "Sansa Stark"
-```
-
----
-
-## Working with Lists
-
-Purrr comes with a few shortcuts, too:
-
-
-```r
-# For each element in got_chars, get the 1st element
-map_chr(got_chars[1:5], 1)
-```
-
-```
-## [1] "https://www.anapioficeandfire.com/api/characters/1022"
-## [2] "https://www.anapioficeandfire.com/api/characters/1052"
-## [3] "https://www.anapioficeandfire.com/api/characters/1074"
-## [4] "https://www.anapioficeandfire.com/api/characters/1109"
-## [5] "https://www.anapioficeandfire.com/api/characters/1166"
-```
-
----
-class:inverse
-## Your Turn
-
-
-```r
-library(dplyr)
-library(purrr)
-```
-
-1. What are the types of each character attribute? (It's ok to look at just the 1st character)
-
-
-2. Which attributes have multiple entries per character? Do any attributes have no entries for all characters?
-
-
-
-3. Assemble a data frame of Game of Thrones characters column-by-column using appropriate `map_*` functions. Which columns cannot be easily included? 
-
-4. How many of the characters are still alive?
     </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
