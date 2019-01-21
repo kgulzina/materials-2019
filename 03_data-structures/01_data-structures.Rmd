@@ -1,6 +1,6 @@
 ---
 title: "Stat 585 - Data Types"
-author: "Heike Hofmann"
+author: "Heike Hofmann and Susan Vanderplas"
 output:
   xaringan::moon_reader:
     lib_dir: libs
