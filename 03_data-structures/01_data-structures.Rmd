@@ -121,6 +121,16 @@ as.numeric(months)
 ```
 
 ---
+class: inverse
+## Your Turn
+
+- Introduce an object consisting of the days of the week
+
+- Make the object a factor; ensure that the days of the week are in chronological rather than alphabetical order
+
+- Change the order of the levels to start with Sunday (in case your levels started with Sunday, change the order to start with Monday)
+
+---
 
 ## Type Conversions
 ```{r}
