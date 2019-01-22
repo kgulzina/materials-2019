@@ -105,7 +105,7 @@ movies %>% ggplot(aes(x = Date)) + geom_histogram(binwidth=7)
 ```
 
 ---
-
+class:inverse
 ## Your Turn (10 min)
 
 - load the `movies` data set,
