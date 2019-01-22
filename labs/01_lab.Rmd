@@ -1,0 +1,117 @@
+---
+title: 'Lab Assignment #1'
+author: "Heike Hofmann"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE, echo = TRUE)
+```
+# How this is going to work
+
+1. Find your team
+
+2. You are asked to work through a set of questions 
+
+3. The deliverable is a self-contained R Markdown document that reproduces all of your findings. 
+
+---
+
+# Agenda for today
+
+1. Link RStudio and git
+
+2. Build a book
+
+3. Deal with the weather (stations)
+
+---
+
+# Create a repo for the lab
+
+1. Elect one team member to create a new repository for the lab. (Don't forget to create the `README.md` file!)
+
+2. Add all team members as collaborators to the repo (under 'Settings' and then 'Collaborators and teams' in the menu on the left).
+
+
+---
+class: inverse, middle, center
+# Connecting RStudio and git
+
+---
+
+# Connecting RStudio and git
+
+Work through [chapter 12](https://happygitwithr.com/rstudio-git-github.html#rstudio-git-github) of Jenny Bryan's book "Happy git with R"
+
+Hook up your lab repository to RStudio. 
+
+Add a file README.rmd in the repo. This is the file you are asked to submit in Canvas. 
+
+Add a link to the lab repository in your write-up.
+
+---
+class: inverse, center, middle
+# Building a book
+
+---
+
+## Building a book
+
+The goal of this  part of the lab is to build the html version of the 2nd edition for Hadley Wickham's book `Advanced R Programming` from a github repository.
+
+Steps:
+
+1. Clone the repository `https://github.com/hadley/adv-r`.
+2. Open the R project in the repository in RStudio.
+3. Navigate to the file `build.r` in the folder `book`.
+4. Run the commands in `build.r`.
+5. The book will be available in `book/advanced-r.pdf`.
+
+Deliverable (1): what is the last word in chapter 15? - You don't have to answer this question, if things don't work, but please answer the next one and see the next page.
+
+Deliverable (2): Write a paragraph on the biggest proble you encountered when you were building the book, and how you managed to solve it.
+
+---
+
+## What to do when things don't work?
+
+Errors happen, they are frustrating, but if we learn something from them, we can turn them into valuable experiences.
+
+- document the error you encounter (be as concise and specific as you can at the same time)
+
+- describe one approach on how you tried to solve the problem (and how this did not work)
+
+Submit a paragraph with this documentation. Write the paragraph in the mindset that you want to get help from somebody, and you try to describe the problem you are encountering. See stackoverflow for [advice on writing good questions](http://stackoverflow.com/help/how-to-ask).
+
+
+---
+class: inverse, middle
+# Weather stations
+
+---
+
+## US weather stations
+
+
+The National Climate Data Center at NOAA publishes information on temperature and precipation across a network of stations in the US.
+
+The Data can be accessed through ftp at ftp://ftp.ncdc.noaa.gov/pub/data/ushcn/v2.5, a code book with a description of the data structure is available at
+ftp://ftp.ncdc.noaa.gov/pub/data/ushcn/v2.5/readme.txt
+
+1. Download a copy of the file `ushcn-v2.5-stations.txt`.
+
+2. Make yourself familar with the command `read_fwf` from package `readr`. 
+
+3. Use the codebook description for the stations file, extract all columns and bring them into the intended format (i.e. numbers are numbers)
+
+4. Create a plot with `ggplot2` to show latitude, longitude and elevation. Can you also include state information and time zone?
+
+5. Deliverable: include the code necessary to read the file and to create the plot in `README.Rmd`. Assume the data is in the same folder as the `README.Rmd` file. 
+
+
