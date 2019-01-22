@@ -28,7 +28,9 @@ options(htmltools.dir.version = FALSE, echo = TRUE)
 
 2. Build a book
 
-3. Deal with the weather (stations)
+3. Deal with the weather (stations) ...
+
+4. ... and some funny file format
 
 ---
 
@@ -75,7 +77,7 @@ Steps:
 
 Deliverable (1): what is the last word in chapter 15? - You don't have to answer this question, if things don't work, but please answer the next one and see the next page.
 
-Deliverable (2): Write a paragraph on the biggest proble you encountered when you were building the book, and how you managed to solve it.
+Deliverable (2): Write a paragraph on the biggest problem you encountered when you were building the book, and how you managed to solve it.
 
 ---
 
@@ -113,5 +115,19 @@ ftp://ftp.ncdc.noaa.gov/pub/data/ushcn/v2.5/readme.txt
 4. Create a plot with `ggplot2` to show latitude, longitude and elevation. Can you also include state information and time zone?
 
 5. Deliverable: include the code necessary to read the file and to create the plot in `README.Rmd`. Assume the data is in the same folder as the `README.Rmd` file. 
+
+
+---
+
+# More weather data
+
+The file `ushcn.tavg.latest.raw.tar.gz`
+at ftp://ftp.ncdc.noaa.gov/pub/data/ushcn/v2.5 contains data on average temperatures across the US. 
+
+1. Download the file and get it to open with tools available in R. (Double-clicking is cheating! :) )
+
+2. Deliverable: include the number of files inside the file `ushcn.tavg.latest.raw.tar.gz` and the name of the file containing the temperature data of your home towns or Fort Dodge, IA (please specify).
+
+If things don't work write a paragraph on why things do not work and what you have tried. 
 
 
