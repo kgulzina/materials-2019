@@ -433,6 +433,63 @@ Don't forget to *look at* the chart. What are your main findings?
 
 ---
 
+
+```r
+# read in schedules and clean up dates
+schedule &lt;- read.csv("../data/isu-football-2018.csv")
+schedule &lt;- schedule %&gt;%
+  mutate(
+    date = lubridate::ymd("2018-01-01")
+    )
+lubridate::month(schedule$date) &lt;- as.numeric(factor(schedule$Month, levels=c("Sep", "Oct", "Nov", "Dec"))) + 8
+lubridate::mday(schedule$date) &lt;- schedule$Day
+schedule$yday &lt;- lubridate::yday(schedule$date)
+schedule$year &lt;- lubridate::year(schedule$date)
+
+
+schedule17 &lt;- read.csv("../data/isu-football-2017.csv")
+schedule17 &lt;- schedule17 %&gt;%
+  mutate(
+    date = lubridate::mdy(Date)
+  )
+schedule17$yday &lt;- lubridate::yday(schedule17$date)
+schedule17$year &lt;- lubridate::year(schedule17$date)
+```
+
+---
+
+
+```r
+perday %&gt;%
+  mutate(
+    year = lubridate::year(day),
+    yday = lubridate::yday(day)
+    ) %&gt;%
+  filter(year &lt;= 2018) %&gt;%
+  ggplot(aes(x = yday, y = n)) +
+  geom_vline(data = schedule, aes(xintercept = yday, colour = home)) +
+  geom_vline(data = schedule17, aes(xintercept = yday, colour = Home)) +
+  geom_point(size = .75) +
+  facet_grid(year~.) +
+  theme_bw() +
+  ylab("Number of police reports") +
+  xlab("Day of the year")
+```
+
+![](01_intro_files/figure-html/unnamed-chunk-15-1.png)&lt;!-- --&gt;
+
+
+---
+# Strange findings
+
+![](01_intro_files/figure-html/unnamed-chunk-16-1.png)&lt;!-- --&gt;
+
+- one large outlier not related to football games in Ames
+- one game at home not resulting in large number of crime logs? (Kansas - ISU 0 - 45)
+- range of two weeks in October 2018 with no crimes logged
+
+---
+
 ## Tools for working with data
 
 - moving between wide and long forms of data:
