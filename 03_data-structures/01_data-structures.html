@@ -162,7 +162,7 @@ Precision is machine dependent
 
 ## Factors
 
-Some data has both names and a defined numerical ordering:
+Some data has names and a defined numerical ordering:
 
 ```r
 month.name
@@ -268,7 +268,7 @@ x
 ```
 
 ```
-## [1] 10  1  7  9  8
+## [1] 7 3 1 2 9
 ```
 
 ```r
@@ -278,8 +278,8 @@ fac_x
 ```
 
 ```
-## [1] 10 1  7  9  8 
-## Levels: 1 7 8 9 10
+## [1] 7 3 1 2 9
+## Levels: 1 2 3 7 9
 ```
 
 ```r
@@ -288,7 +288,7 @@ as.numeric(fac_x) # Huh?
 ```
 
 ```
-## [1] 5 1 2 4 3
+## [1] 4 3 1 2 5
 ```
 `as.numeric()` converts factors to their level numbers, not to their labels
 
@@ -302,7 +302,7 @@ as.character(fac_x)
 ```
 
 ```
-## [1] "10" "1"  "7"  "9"  "8"
+## [1] "7" "3" "1" "2" "9"
 ```
 
 ```r
@@ -310,7 +310,7 @@ as.numeric(as.character(fac_x))
 ```
 
 ```
-## [1] 10  1  7  9  8
+## [1] 7 3 1 2 9
 ```
 `as.character()` extracts the labels; you can then use `as.numeric` to get the labels' numeric value.
 
@@ -502,7 +502,7 @@ d %&gt;% glimpse()
 ## Variables: 3
 ## $ x   &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 ## $ y   &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
-## $ fac &lt;fct&gt; C, B, C, C, C, C, C, A, B, C
+## $ fac &lt;fct&gt; B, A, A, B, B, B, C, B, A, B
 ```
 
 ---
@@ -520,7 +520,7 @@ str(d)
 ## 'data.frame':	10 obs. of  3 variables:
 ##  $ x  : num  1 1 1 1 1 1 1 1 1 1
 ##  $ y  : int  1 2 3 4 5 6 7 8 9 10
-##  $ fac: Factor w/ 3 levels "A","B","C": 3 2 3 3 3 3 3 1 2 3
+##  $ fac: Factor w/ 3 levels "A","B","C": 2 1 1 2 2 2 3 2 1 2
 ```
 
 ```r

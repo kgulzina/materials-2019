@@ -78,7 +78,7 @@ Precision is machine dependent
 
 ## Factors
 
-Some data has both names and a defined numerical ordering:
+Some data has names and a defined numerical ordering:
 ```{r}
 month.name
 ```
