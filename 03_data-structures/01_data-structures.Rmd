@@ -46,7 +46,7 @@ Test whether something has a data type with `is.XXX`, e.g. `is.character("fuzzy 
 Numeric objects have double precision, i.e. work with 53 bits 
 ```{r, echo=TRUE}
 pi <- as.numeric(gsub(" ","","3.14159 26535 89793 23846 26433"))
-# maximum number of digist that can be shown is 22
+# maximum number of digits that can be shown is 22
 print(pi, digits=22)
 ```
 first 15 digits are fine, anything beyond that is suspicious and most likely incorrect
