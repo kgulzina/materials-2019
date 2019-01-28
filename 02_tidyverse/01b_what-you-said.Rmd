@@ -38,7 +38,7 @@ my personal nightmare scenario: classes get cancelled during our lab because CyR
 
 **What we will do:**
 
-if  ISU cancels classes, we do our lab on Monday next week
+if ISU cancels classes, we do our lab on Monday next week
 
 if ISU does not cancel classes, we do the lab remotely from a safe place (Dr Hofmann will be in the lab)
 
