@@ -30,7 +30,7 @@ options(htmltools.dir.version = FALSE, echo = TRUE)
 
 3. Deal with the weather (stations) ...
 
-4. ... and some funny file format
+4. ... and some funny file formats
 
 ---
 
