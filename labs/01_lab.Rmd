@@ -71,9 +71,8 @@ Steps:
 
 1. Clone the repository `https://github.com/hadley/adv-r`.
 2. Open the R project in the repository in RStudio.
-3. Navigate to the file `build.r` in the folder `book`.
-4. Run the commands in `build.r`.
-5. The book will be available in `book/advanced-r.pdf`.
+3. Navigate to the file `index.Rmd` and knit it.
+4. The book will be available in html format as index.html
 
 Deliverable (1): what is the last word in chapter 15? - You don't have to answer this question, if things don't work, but please answer the next one and see the next page.
 
