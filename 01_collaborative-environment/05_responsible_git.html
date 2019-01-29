@@ -75,6 +75,7 @@ class:middle,center
 ## Rule 3
 ### Secret files should stay off of git(hub)
 
+.hard-right[![:scale 250px](https://upload.wikimedia.org/wikipedia/commons/a/a2/Standard-lock-key.jpg)]
 
 ---
 ## Rule 3
@@ -86,6 +87,7 @@ class:middle,center
 
 - Other secure information (SSN, bank account number, location of secret treasure maps)
 
+.hard-right[![:scale 250px](https://upload.wikimedia.org/wikipedia/commons/a/a2/Standard-lock-key.jpg)]
 --
 
 Don't add these to git, don't push them to GitHub
@@ -106,7 +108,7 @@ In theory, Git is intended for code, not data
 
 ---
 ## Keeping files off of git
-
+.hard-right[![:scale 30%](https://cdn.worldvectorlogo.com/logos/github-octocat.svg)]
 The `.gitignore` file is found in the main project directory (aka project root, "./")
 
 - You can add files to the list in `.gitignore` and git will ignore them
@@ -114,6 +116,8 @@ The `.gitignore` file is found in the main project directory (aka project root, 
 - You can push the `.gitignore` file if you want your collaborators to observe the same rules
 
 - Wildcards also work - e.g. *.html will ignore all html files
+
+Check out Octocat's [default git ignore file](https://gist.github.com/octocat/9257657) for inspiration!
 
 ---
 class:inverse,middle,center
@@ -137,6 +141,7 @@ Mergify *should* enforce the following rules:
 Any of these issues can cause your pull request to not be automatically merged.
     </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
 <script>var slideshow = remark.create({
 "highlightStyle": "github",
 "highlightLines": true,
