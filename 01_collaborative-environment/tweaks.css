@@ -7,7 +7,9 @@
   float: right;
 }
 
-.hard-topright{
-  position-top:20px;
-  position-right:20px;
+.hard-right{
+  position: absolute;
+  bottom:20px !important;
+  right:20px !important;
+  text-align:right;
 }
