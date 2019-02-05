@@ -92,6 +92,17 @@ if (condition) { # only one set of commands
 
 ---
 
+## Conditionals - if()
+
+![If statement block diagram](if.svg)
+
+---
+
+## Conditionals - ifelse 
+![If-else statement block diagram](ifelse.svg)
+
+---
+
 ## A first function
 
 ```{r first-function-2}
@@ -149,8 +160,11 @@ class: inverse
 - Use tabs to structure blocks of statements
 
 - Build complex blocks of codes step by step
+    - A function should complete one task
+    - Chain multiple functions together with a meta-function for more complex tasks
 
 - `# write comments!`
+
 
 ---
 
@@ -189,7 +203,7 @@ class: inverse
 
 ### Your Turn
 
-- Download the data for 2018 and 2017
+- Download the data for 2018 and 2017 using R
 
 - How could you automate the download?
 
@@ -251,3 +265,37 @@ for (i in players) {
 --
 
 This is a loop, or iteration
+
+---
+
+## Iterations and R
+
+- R is vector-based - many tasks don't require loops at all
+
+- `for` loops are useful for debugging purposes
+
+- The `apply` series of functions (`lapply`, `sapply`, `mapply`, `tapply`) can be used to "loop" in R without an explicit for loop
+
+- `purrr` is a tidyverse package used for functional programming
+    - tidy version of `apply`: `map`
+    - more consistent API
+
+
+---
+class: inverse
+## Your Turn
+
+[FizzBuzz](http://www.dr-mikes-math-games-for-kids.com/fizz-buzz.html) is a common game to teach children multiplication tables
+
+Write a function that, for any lower bound $a$ and upper bound $b$, outputs the correct response to FizzBuzz:
+- if the number is divisible by 3, the program returns "fizz" instead of the number
+- if the number is divisible by 7, the program returns "buzz" instead of the number
+- if the number is divisible by 3 and 7, the program returns "fizzbuzz" instead of the number
+
+The modulus operator, `%%` will be useful.
+
+1. Write a fizzbuzz function using a `for` loop
+
+2. Can you make your function work without using a loop?
+
+
