@@ -158,7 +158,7 @@ as.numeric(as.character(fac_x))
 
 ---
 
-## Type conversions
+## Type Conversions
 
 implicit type conversions happen all the time:
 ```{r}
